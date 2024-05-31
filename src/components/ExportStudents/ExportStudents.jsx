@@ -1,10 +1,11 @@
 import { Button, Select, Text } from "@mantine/core";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import {
   exportStudentsArr,
   masterClassArr,
   studentsWithClassArr,
-  createCSV,
+  createCSVFile,
+  downloadFile,
 } from "./ExportStudentsData";
 
 /**
@@ -17,32 +18,32 @@ import {
  */
 export default function ExportStudents({ students }) {
   const [selectedClass, setSelectedClass] = useState("");
-
+  const memoMasterClassArr = useMemo(
+    () => masterClassArr(students),
+    [students]
+  );
   // takes the students enrolled in a class, and downloads a csv of their time in that class
   const exportStudents = (classItem) => {
+    const filename = `${classItem} Timesheet.csv`;
+
     // students enrolled in selected class
     const classOfStudents = studentsWithClassArr(students, classItem);
 
     // transform students list to readable data for csv
     const csvData = exportStudentsArr(classOfStudents, classItem);
 
-    // create csv file data
-    const csv = createCSV(csvData);
+    // uses csvData to create a file object and returns the url for that object
+    const csvFileUrl = createCSVFile(csvData);
 
-    // create a new blob for csv file, attach it to a download link, and click it
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `${classItem} Timesheet.csv`;
-    a.click();
+    // creates download for csv by simulating click on a element with csvUrl
+    downloadFile(csvFileUrl, filename);
   };
 
   return (
     <>
       <Text>Choose Class to Export</Text>
       <Select
-        data={masterClassArr(students)}
+        data={memoMasterClassArr}
         value={selectedClass}
         onChange={setSelectedClass}
       />

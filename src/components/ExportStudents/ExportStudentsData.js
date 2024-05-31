@@ -186,3 +186,31 @@ export const createCSV = (csvData) => {
   });
   return csv;
 };
+
+/**
+ * Creates a CSV file from the provided data.
+ *
+ * @param {Array} csvData - The data to be converted into a CSV file.
+ * @returns {string} - The url of the created CSV file.
+ */
+export const createCSVFile = (csvData) => {
+  // create csv file data from csv string
+  const csvString = createCSV(csvData);
+  // create a new blob for csv file, return file object url
+  const blob = new Blob([csvString], { type: "text/csv" });
+  const url = window.URL.createObjectURL(blob);
+  return url;
+};
+
+/**
+ * Downloads a file from the given URL with the specified filename.
+ * Does not return anything, simulates click for downloading input file
+ * @param {string} url - The URL of the file to download.
+ * @param {string} filename - The desired filename for the downloaded file.
+ */
+export const downloadFile = (url, filename) => {
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+};
