@@ -24,6 +24,7 @@ export default function ExportStudents({ students }) {
   );
   // takes the students enrolled in a class, and downloads a csv of their time in that class
   const exportStudents = (classItem) => {
+    // name assigned to output csv file
     const filename = `${classItem} Timesheet.csv`;
 
     // students enrolled in selected class
@@ -32,11 +33,21 @@ export default function ExportStudents({ students }) {
     // transform students list to readable data for csv
     const csvData = exportStudentsArr(classOfStudents, classItem);
 
-    // uses csvData to create a file object and returns the url for that object
-    const csvFileUrl = createCSVFile(csvData);
+    // create web worker for csv logic to keep main thread free for UI render
+    const csvWorker = new Worker(new URL("./csvWorker.js", import.meta.url), {
+      type: "module",
+    });
+    csvWorker.postMessage(csvData);
+    csvWorker.onmessage = (e) => {
+      const csvString = e.data;
+      // uses csvData to create a file object and returns the url for that object
+      const csvFileUrl = createCSVFile(csvString);
 
-    // creates download for csv by simulating click on a element with csvUrl
-    downloadFile(csvFileUrl, filename);
+      // creates download for csv by simulating click on a element with csvUrl
+      downloadFile(csvFileUrl, filename);
+
+      csvWorker.terminate();
+    };
   };
 
   return (

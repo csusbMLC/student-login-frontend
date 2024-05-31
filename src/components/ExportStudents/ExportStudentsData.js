@@ -190,12 +190,10 @@ export const createCSV = (csvData) => {
 /**
  * Creates a CSV file from the provided data.
  *
- * @param {Array} csvData - The data to be converted into a CSV file.
+ * @param {Array} csvString - The csv string to be converted into a CSV file.
  * @returns {string} - The url of the created CSV file.
  */
-export const createCSVFile = (csvData) => {
-  // create csv file data from csv string
-  const csvString = createCSV(csvData);
+export const createCSVFile = (csvString) => {
   // create a new blob for csv file, return file object url
   const blob = new Blob([csvString], { type: "text/csv" });
   const url = window.URL.createObjectURL(blob);
