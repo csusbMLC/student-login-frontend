@@ -1,3 +1,5 @@
+import { secondsToHoursMinutesSeconds } from "@src/utilities/time";
+
 /**
  * @typedef {Object} LoginTimestamp
  * @property {string} className - The name of the class.
@@ -5,8 +7,6 @@
  * @property {number} logoutTime - The logout time in milliseconds since epoch.
  * @property {number} totalTime - The total time spent logged in, in milliseconds.
  */
-
-import { secondsToHoursMinutesSeconds } from "@src/utilities/time";
 
 /**
  * @typedef {Object} Student
@@ -20,7 +20,8 @@ import { secondsToHoursMinutesSeconds } from "@src/utilities/time";
  */
 
 /**
- * @function masterClassArr - Creates an array of unique classes sorted in ascending or descending order.
+ * Creates an array of unique classes sorted in ascending or descending order.
+ *
  * @param {Student[]} students - The array of student objects.
  * @param {string} [sort="asc"] - The sort order for the classes array. Default is "asc". Can be "asc" or "desc".
  * @returns {string[]} The array of unique classes sorted in ascending or descending order.
@@ -48,6 +49,14 @@ export const masterClassArr = (students, sort = "asc") => {
   return uniqueClassesArray;
 };
 
+/**
+ * Filters and sorts an array of students based on the specified class name and sort order.
+ *
+ * @param {Student[]} students - The array of students to filter and sort.
+ * @param {string} className - The class name to filter the students by.
+ * @param {string} [sort="desc"] - The sort order. Defaults to "desc" (descending order).
+ * @returns {Student[]} - The filtered and sorted array of students.
+ */
 export const studentsWithClassArr = (students, className, sort = "desc") => {
   const filteredStudents = students.filter((student) =>
     student.classes.includes(className)
@@ -60,6 +69,13 @@ export const studentsWithClassArr = (students, className, sort = "desc") => {
   return filteredStudents;
 };
 
+/**
+ * Calculates the total number of seconds a student has spent in a specific class.
+ *
+ * @param {Student} student - The student object containing login timestamps.
+ * @param {string} className - The name of the class to calculate total seconds for.
+ * @returns {number} - The total number of seconds the student has spent in the specified class.
+ */
 export const findTotalSecondsByClass = (student, className) => {
   let totalSeconds = 0;
   // console.log(student, "student in findTotalSecondsByClass");
@@ -73,12 +89,25 @@ export const findTotalSecondsByClass = (student, className) => {
   return totalSeconds;
 };
 
+/**
+ * Returns an array of timestamps for a specific class from a student's login timestamps.
+ *
+ * @param {Student} student - The student object containing login timestamps.
+ * @param {string} className - The name of the class to filter timestamps for.
+ * @returns {LoginTimestamp[]} - An array of timestamps for the specified class.
+ */
 export const timeStampsByClass = (student, className) => {
   return student.loginTimestamps.filter(
     (timestamp) => timestamp.className === className
   );
 };
 
+/**
+ * Transforms an array of student objects into a format for CSV creation.
+ * @param {Student[]} students - The array of student objects.
+ * @param {string} className - The name of the class.
+ * @returns {Array} - The transformed array of student objects.
+ */
 export const exportStudentsArr = (students, className) => {
   return students.map((student) => {
     const id = student.studentId;
@@ -134,6 +163,15 @@ export const exportStudentsArr = (students, className) => {
   });
 };
 
+/**
+ * Creates a CSV string from the provided data.
+ * Has set headers, creates a line for student name,
+ * creates a row for each timestamp,
+ * creates a final row for all time spent for that student
+ *
+ * @param {Array} csvData - The data from exportStudentsArr function
+ * @returns {string} - The CSV string.
+ */
 export const createCSV = (csvData) => {
   let csv =
     "ID, Last Name, First Name, Date, Time In, Time Out, Elapsed Time, Class\n";

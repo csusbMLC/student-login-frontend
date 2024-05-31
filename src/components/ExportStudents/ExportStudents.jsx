@@ -8,9 +8,9 @@ import {
 } from "./ExportStudentsData";
 
 /**
- * Component for exporting students' data to a CSV file.
+ * Component for exporting students' data, by class, to a CSV file.
  *
- * @component
+ * @component - ExportStudents component that handles dropdown UI for export
  * @param {Object} props - The component props.
  * @param {Object[]} props.students - The array of student objects.
  * @returns {JSX.Element} The ExportStudents component.
@@ -18,11 +18,7 @@ import {
 export default function ExportStudents({ students }) {
   const [selectedClass, setSelectedClass] = useState("");
 
-  // Need to make a list of every unique class in the students array
-  // Then, display a dropdown of all the classes
-  // Then, when a class is selected
-  // Export a CSV of all the students in that class along with their student ID and total hours
-
+  // takes the students enrolled in a class, and downloads a csv of their time in that class
   const exportStudents = (classItem) => {
     // students enrolled in selected class
     const classOfStudents = studentsWithClassArr(students, classItem);
@@ -33,7 +29,7 @@ export default function ExportStudents({ students }) {
     // create csv file data
     const csv = createCSV(csvData);
 
-    // create a new blob and download it
+    // create a new blob for csv file, attach it to a download link, and click it
     const blob = new Blob([csv], { type: "text/csv" });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement("a");
