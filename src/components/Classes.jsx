@@ -1,6 +1,19 @@
 import { useEffect, useState } from "react";
-import { secondsToHoursMinutesSeconds } from "@src/utilities/time";
-import { Title, Text, Button, Select, Box, Stack } from "@mantine/core";
+import {
+  addMinutesToDate,
+  secondsToHoursMinutesSeconds,
+} from "@src/utilities/time";
+import {
+  Title,
+  Text,
+  Button,
+  Select,
+  Box,
+  Stack,
+  Modal,
+  Divider,
+} from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
 import { useLoaderData, useParams, useNavigate } from "react-router-dom";
 import { studentLogin, studentLogout } from "@src/services/apiServices";
 
@@ -12,6 +25,7 @@ function Classes({ setStudent = null }) {
   const [timer, setTimer] = useState(0);
   const [startTimer, setStartTimer] = useState(false);
   const [displayTimer, setDisplayTimer] = useState(0);
+  const [openedIdleChecker, { open, close }] = useDisclosure(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -31,6 +45,12 @@ function Classes({ setStudent = null }) {
   useEffect(() => {
     setDisplayTimer(secondsToHoursMinutesSeconds(timer));
   }, [timer]);
+
+  useEffect(() => {
+    if (timer === 30) {
+      open();
+    }
+  }, [timer, open]);
 
   const handleLogin = (classToSend) => {
     studentLogin(studentId, classToSend)
@@ -93,6 +113,24 @@ function Classes({ setStudent = null }) {
           </Box>
         )}
       </Stack>
+      {/* <Button onClick={open}>Idle Checker</Button> */}
+      <Modal
+        opened={openedIdleChecker}
+        onClose={close}
+        title="Do you want to continue your session?"
+        size="sm"
+        centered
+      >
+        {/* <Title>Do you want to continue your session?</Title> */}
+        <Text>
+          For security reasons, your session will timeout at{" "}
+          {String(addMinutesToDate(undefined, 2))} unless you continue.
+        </Text>
+        <Divider my="md" />
+        <Button onClick={close} fullWidth>
+          Continue Session
+        </Button>
+      </Modal>
     </Box>
   );
 }
