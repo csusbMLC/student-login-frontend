@@ -26,6 +26,7 @@ function Classes({ setStudent = null }) {
   const [startTimer, setStartTimer] = useState(false);
   const [displayTimer, setDisplayTimer] = useState(0);
   const [openedIdleChecker, { open, close }] = useDisclosure(false);
+  const [idleTimer, setIdleTimer] = useState(0);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -51,6 +52,26 @@ function Classes({ setStudent = null }) {
       open();
     }
   }, [timer, open]);
+
+  useEffect(() => {
+    let timeoutInterval = null;
+
+    if (openedIdleChecker) {
+      timeoutInterval = setInterval(() => {
+        setIdleTimer((timer) => timer + 1);
+      }, 1000);
+    } else if (timeoutInterval) {
+      clearInterval(timeoutInterval);
+    }
+
+    return () => clearInterval(timeoutInterval);
+  }, [openedIdleChecker]);
+
+  useEffect(() => {
+    if (idleTimer >= 120) {
+      close();
+    }
+  }, [idleTimer, close]);
 
   const handleLogin = (classToSend) => {
     studentLogin(studentId, classToSend)
@@ -113,7 +134,7 @@ function Classes({ setStudent = null }) {
           </Box>
         )}
       </Stack>
-      {/* <Button onClick={open}>Idle Checker</Button> */}
+      <Button onClick={open}>Idle Checker</Button>
       <Modal
         opened={openedIdleChecker}
         onClose={close}
