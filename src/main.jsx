@@ -1,30 +1,35 @@
-import React, { createContext, useContext } from 'react'
-import ReactDOM from 'react-dom/client'
-import { MantineProvider } from '@mantine/core'
-import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom'
-import App from '@src/App.jsx'
-import Login from '@components/Login.jsx'
-import ErrorPage from '@src/error-page.jsx'
+import React, { createContext, useContext } from "react";
+import ReactDOM from "react-dom/client";
+import { Button, MantineProvider } from "@mantine/core";
+import {
+  createBrowserRouter,
+  RouterProvider,
+  Navigate,
+} from "react-router-dom";
+import App from "@src/App.jsx";
+import Login from "@components/Login.jsx";
+import ErrorPage from "@src/error-page.jsx";
 
-import '@mantine/core/styles.css';
-import '@mantine/dates/styles.css';
-import './index.css'
-import Classes from '@components/Classes.jsx'
-import AdminLogin from '@components/AdminLogin.jsx'
-import AdminContextProvider from '@components/AdminContextProvider.jsx'
-import Dashboard from '@components/Dashboard/Dashboard.jsx'
-import { studentLoader } from '@services/loaders/studentLoader'
-import { studentsLoader } from '@services/loaders/studentsLoader'
+import "@mantine/core/styles.css";
+import "@mantine/dates/styles.css";
+import "./index.css";
+import Classes from "@components/Classes.jsx";
+import AdminLogin from "@components/AdminLogin.jsx";
+import AdminContextProvider from "@components/AdminContextProvider.jsx";
+import Dashboard from "@components/Dashboard/Dashboard.jsx";
+import { studentLoader } from "@services/loaders/studentLoader";
+import { studentsLoader } from "@services/loaders/studentsLoader";
 
-
-
-import dayjs from 'dayjs';
-import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { ModalsProvider } from '@mantine/modals'
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+import { ModalsProvider } from "@mantine/modals";
 
 dayjs.extend(customParseFormat);
 
-export const AdminAuthContext = createContext({ user: null, setUser: () => { } });
+export const AdminAuthContext = createContext({
+  user: null,
+  setUser: () => {},
+});
 
 function AdminAuth({ children, redirectTo }) {
   const { user } = useContext(AdminAuthContext);
@@ -46,14 +51,30 @@ function GuestOnly({ children, redirectTo }) {
 
 const router = createBrowserRouter([
   {
-    path: '/',
+    path: "/",
     element: <App />,
     errorElement: <ErrorPage />,
     children: [
-      { path: '/students/:studentId', element: <Classes />, loader: studentLoader },
-      { path: '/', element: <Login /> },
+      {
+        path: "/students/:studentId",
+        element: <Classes />,
+        loader: studentLoader,
+      },
+      { path: "/", element: <Login /> },
+      {
+        path: "/students/loggedout",
+        element: (
+          <div>
+            <h1>Thank you for visiting!</h1>
+            <p>You have been securely signed off</p>
+            <Button onClick={() => window.navigator.navigate("/")}>
+              Login
+            </Button>
+          </div>
+        ),
+      },
       // { path: '/admin', element: <Admin />}
-    ]
+    ],
   },
   // {
   //   path: '/students/:studentId',
@@ -62,24 +83,24 @@ const router = createBrowserRouter([
   //   loader: studentLoader,
   // },
   {
-    path: '/admin',
+    path: "/admin",
     loader: studentsLoader,
     element: (
-      <AdminAuth redirectTo='/admin/login'>
+      <AdminAuth redirectTo="/admin/login">
         <Dashboard />
       </AdminAuth>
     ),
     errorElement: <ErrorPage />,
   },
   {
-    path: '/admin/login',
+    path: "/admin/login",
     element: (
-      <GuestOnly redirectTo='/admin'>
+      <GuestOnly redirectTo="/admin">
         <AdminLogin />
       </GuestOnly>
     ),
     errorElement: <ErrorPage />,
-  }
+  },
   // {
   //   path: '/admin',
   //   element: <Admin />,
@@ -87,16 +108,20 @@ const router = createBrowserRouter([
   // },
 ]);
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
   <React.StrictMode>
-    <MantineProvider withGlobalStyles withNormalizeCSS defaultColorScheme='auto'>
+    <MantineProvider
+      withGlobalStyles
+      withNormalizeCSS
+      defaultColorScheme="auto"
+    >
       <ModalsProvider>
         <AdminContextProvider>
           <RouterProvider router={router} />
         </AdminContextProvider>
       </ModalsProvider>
     </MantineProvider>
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+);

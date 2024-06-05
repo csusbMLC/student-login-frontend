@@ -25,7 +25,10 @@ function Classes({ setStudent = null }) {
   const [timer, setTimer] = useState(0);
   const [startTimer, setStartTimer] = useState(false);
   const [displayTimer, setDisplayTimer] = useState(0);
-  const [openedIdleChecker, { open, close }] = useDisclosure(false);
+  const [timeoutTimeStr, setTimeoutTimeStr] = useState("");
+  const [openedIdleChecker, { open, close }] = useDisclosure(false, {
+    onOpen: () => setTimeoutTimeStr(String(addMinutesToDate(undefined, 2))),
+  });
   const [idleTimer, setIdleTimer] = useState(0);
   const navigate = useNavigate();
 
@@ -70,6 +73,7 @@ function Classes({ setStudent = null }) {
   useEffect(() => {
     if (idleTimer >= 120) {
       close();
+      navigate("/students/loggedout", { replace: true });
     }
   }, [idleTimer, close]);
 
@@ -144,8 +148,8 @@ function Classes({ setStudent = null }) {
       >
         {/* <Title>Do you want to continue your session?</Title> */}
         <Text>
-          For security reasons, your session will timeout at{" "}
-          {String(addMinutesToDate(undefined, 2))} unless you continue.
+          For security reasons, your session will timeout at {timeoutTimeStr}{" "}
+          unless you continue.
         </Text>
         <Divider my="md" />
         <Button onClick={close} fullWidth>
