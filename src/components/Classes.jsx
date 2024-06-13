@@ -71,9 +71,9 @@ function Classes({ setStudent = null }) {
   }, [openedIdleChecker]);
 
   useEffect(() => {
-    if (idleTimer >= 120) {
+    if (idleTimer >= 10) {
       close();
-      navigate("/students/loggedout", { replace: true });
+      navigate(`/students/${studentId}/loggedout`, { replace: true });
     }
   }, [idleTimer, close]);
 

@@ -1,6 +1,6 @@
 import React, { createContext, useContext } from "react";
 import ReactDOM from "react-dom/client";
-import { Button, MantineProvider } from "@mantine/core";
+import { MantineProvider } from "@mantine/core";
 import {
   createBrowserRouter,
   RouterProvider,
@@ -23,6 +23,7 @@ import { studentsLoader } from "@services/loaders/studentsLoader";
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import { ModalsProvider } from "@mantine/modals";
+import Logout from "@components/Logout/Logout";
 
 dayjs.extend(customParseFormat);
 
@@ -62,16 +63,9 @@ const router = createBrowserRouter([
       },
       { path: "/", element: <Login /> },
       {
-        path: "/students/loggedout",
-        element: (
-          <div>
-            <h1>Thank you for visiting!</h1>
-            <p>You have been securely signed off</p>
-            <Button onClick={() => window.navigator.navigate("/")}>
-              Login
-            </Button>
-          </div>
-        ),
+        path: "/students/:studentId/loggedout",
+        element: <Logout />,
+        loader: studentLoader,
       },
       // { path: '/admin', element: <Admin />}
     ],
