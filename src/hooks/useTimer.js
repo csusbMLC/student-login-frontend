@@ -1,25 +1,17 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
+import { useInterval } from "@mantine/hooks";
 
 export const useTimer = (initialValue = 0) => {
   const [timer, setTimer] = useState(initialValue);
-  const [startTimer, setStartTimer] = useState(false);
-
-  useEffect(() => {
-    let interval = null;
-    if (startTimer) {
-      interval = setInterval(() => {
-        setTimer((timer) => timer + 1);
-      }, 1000);
-    } else if (interval) {
-      clearInterval(interval);
-    }
-
-    return () => clearInterval(interval);
-  }, [startTimer]);
+  const { start, stop, active } = useInterval(
+    () => setTimer((s) => s + 1),
+    1000
+  );
 
   return {
     timer,
-    startTimer: () => setStartTimer(true),
-    stopTimer: () => setStartTimer(false),
+    startTimer: () => start(),
+    stopTimer: () => stop(),
+    active,
   };
 };
