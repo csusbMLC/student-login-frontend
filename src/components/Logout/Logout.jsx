@@ -3,6 +3,12 @@ import { classTotalTime } from "@src/utilities/student";
 import { secondsToHoursMinutesSeconds } from "@src/utilities/time";
 import { useLoaderData } from "react-router-dom";
 
+/**
+ * Logout component.
+ * Renders a logout message, total time spent in lab for logged out class, and a login button.
+ *
+ * @returns {JSX.Element} The rendered Logout component.
+ */
 const Logout = () => {
   const { loginTimestamps, lastClass } = useLoaderData();
 
