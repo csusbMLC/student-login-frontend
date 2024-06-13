@@ -1,104 +1,49 @@
-import { useEffect, useState } from "react";
-import {
-  addMinutesToDate,
-  secondsToHoursMinutesSeconds,
-} from "@src/utilities/time";
-import {
-  Title,
-  Text,
-  Button,
-  Select,
-  Box,
-  Stack,
-  Modal,
-  Divider,
-} from "@mantine/core";
-import { useDisclosure } from "@mantine/hooks";
+import { useState, useMemo } from "react";
+import { secondsToHoursMinutesSeconds } from "@src/utilities/time";
+import { Title, Text, Button, Select, Box, Stack } from "@mantine/core";
 import { useLoaderData, useParams, useNavigate } from "react-router-dom";
-import { studentLogin, studentLogout } from "@src/services/apiServices";
+import { useTimer } from "@src/hooks/useTimer";
+import { useStudentAuth } from "@src/hooks/useStudentAuth";
+
+function LoggedInSection({ selectedClass, timer, handleLogout }) {
+  return (
+    <Stack spacing="sm">
+      <Text>Logged in to {selectedClass}</Text>
+      <Text>
+        Time Spent: {secondsToHoursMinutesSeconds(timer)}{" "}
+        (hours:minutes:seconds)
+      </Text>
+      <Button onClick={handleLogout}>Logout</Button>
+    </Stack>
+  );
+}
+
+function LoggedOutSection({ handleLogin }) {
+  return <Button onClick={handleLogin}>Login</Button>;
+}
 
 function Classes({ setStudent = null }) {
   const { studentId } = useParams();
   const { classes, studentName } = useLoaderData();
   const [selectedClass, setSelectedClass] = useState("");
-  const [loggedIn, setLoggedIn] = useState(false);
-  const [timer, setTimer] = useState(0);
-  const [startTimer, setStartTimer] = useState(false);
-  const [displayTimer, setDisplayTimer] = useState(0);
-  const [timeoutTimeStr, setTimeoutTimeStr] = useState("");
-  const [openedIdleChecker, { open, close }] = useDisclosure(false, {
-    onOpen: () => setTimeoutTimeStr(String(addMinutesToDate(undefined, 2))),
-  });
-  const [idleTimer, setIdleTimer] = useState(0);
+  const { timer, startTimer, stopTimer } = useTimer(0);
   const navigate = useNavigate();
-
-  useEffect(() => {
-    let interval = null;
-
-    if (startTimer) {
-      interval = setInterval(() => {
-        setTimer((timer) => timer + 1);
-      }, 1000);
-    } else if (interval) {
-      clearInterval(interval);
-    }
-
-    return () => clearInterval(interval);
-  }, [startTimer]);
-
-  useEffect(() => {
-    setDisplayTimer(secondsToHoursMinutesSeconds(timer));
-  }, [timer]);
-
-  useEffect(() => {
-    if (timer === 30) {
-      open();
-    }
-  }, [timer, open]);
-
-  useEffect(() => {
-    let timeoutInterval = null;
-
-    if (openedIdleChecker) {
-      timeoutInterval = setInterval(() => {
-        setIdleTimer((timer) => timer + 1);
-      }, 1000);
-    } else if (timeoutInterval) {
-      clearInterval(timeoutInterval);
-    }
-
-    return () => clearInterval(timeoutInterval);
-  }, [openedIdleChecker]);
-
-  useEffect(() => {
-    if (idleTimer >= 10) {
-      close();
+  const { loggedIn, handleLogin, handleLogout } = useStudentAuth(
+    studentId,
+    () => {
+      startTimer();
+    },
+    () => {
+      stopTimer();
       navigate(`/students/${studentId}/loggedout`, { replace: true });
     }
-  }, [idleTimer, close]);
+  );
 
-  const handleLogin = (classToSend) => {
-    studentLogin(studentId, classToSend)
-      .then(() => {
-        setLoggedIn(true);
-        setStartTimer(true);
-      })
-      .catch((error) => {
-        console.error("Error logging in:", error);
-      });
-  };
-
-  const handleLogout = () => {
-    studentLogout(studentId)
-      .then(() => {
-        setStartTimer(false);
-        setLoggedIn(false);
-        navigate("/", { replace: true });
-      })
-      .catch((error) => {
-        console.error("Error logging out:", error);
-      });
-  };
+  // useMemo for transforming classes data
+  const selectData = useMemo(
+    () => classes.map((cls) => ({ value: cls, label: cls })),
+    [classes]
+  );
 
   return (
     <Box sx={{ maxWidth: 400 }} mx="auto">
@@ -120,42 +65,26 @@ function Classes({ setStudent = null }) {
             placeholder="Select a class"
             value={selectedClass}
             onChange={setSelectedClass}
-            data={classes.map((cls) => ({ value: cls, label: cls }))}
+            data={selectData}
           />
         )}
 
         {selectedClass && (
           <Box>
             {loggedIn ? (
-              <Stack spacing="sm">
-                <Text>Logged in to {selectedClass}</Text>
-                <Text>Time Spent: {displayTimer} (hours:minutes:seconds)</Text>
-                <Button onClick={handleLogout}>Logout</Button>
-              </Stack>
+              <LoggedInSection
+                selectedClass={selectedClass}
+                timer={timer}
+                handleLogout={handleLogout}
+              />
             ) : (
-              <Button onClick={() => handleLogin(selectedClass)}>Login</Button>
+              <LoggedOutSection
+                handleLogin={() => handleLogin(selectedClass)}
+              />
             )}
           </Box>
         )}
       </Stack>
-      <Button onClick={open}>Idle Checker</Button>
-      <Modal
-        opened={openedIdleChecker}
-        onClose={close}
-        title="Do you want to continue your session?"
-        size="sm"
-        centered
-      >
-        {/* <Title>Do you want to continue your session?</Title> */}
-        <Text>
-          For security reasons, your session will timeout at {timeoutTimeStr}{" "}
-          unless you continue.
-        </Text>
-        <Divider my="md" />
-        <Button onClick={close} fullWidth>
-          Continue Session
-        </Button>
-      </Modal>
     </Box>
   );
 }
