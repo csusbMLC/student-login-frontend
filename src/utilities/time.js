@@ -5,11 +5,13 @@
  * @returns {string} The input date string.
  */
 export function convertToInputDate(date) {
-    const dateObj = new Date(date);
-    const year = dateObj.getFullYear();
-    const month = dateObj.getMonth() + 1;
-    const day = dateObj.getDate();
-    return `${year}-${month < 10 ? '0' + month : month}-${day < 10 ? '0' + day : day}`;
+  const dateObj = new Date(date);
+  const year = dateObj.getFullYear();
+  const month = dateObj.getMonth() + 1;
+  const day = dateObj.getDate();
+  return `${year}-${month < 10 ? "0" + month : month}-${
+    day < 10 ? "0" + day : day
+  }`;
 }
 
 /**
@@ -18,11 +20,13 @@ export function convertToInputDate(date) {
  * @returns {string} The formatted time string.
  */
 export function convertToInputTime(date) {
-    const dateObj = new Date(date);
-    const hours = dateObj.getHours();
-    const minutes = dateObj.getMinutes();
-    const seconds = dateObj.getSeconds();
-    return `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${seconds < 10 ? '0' + seconds : seconds}`;
+  const dateObj = new Date(date);
+  const hours = dateObj.getHours();
+  const minutes = dateObj.getMinutes();
+  const seconds = dateObj.getSeconds();
+  return `${hours < 10 ? "0" + hours : hours}:${
+    minutes < 10 ? "0" + minutes : minutes
+  }:${seconds < 10 ? "0" + seconds : seconds}`;
 }
 
 /**
@@ -31,10 +35,12 @@ export function convertToInputTime(date) {
  * @returns {string} The formatted time string in the format of "hh:mm:ss".
  */
 export function secondsToHoursMinutesSeconds(seconds) {
-    const hours = Math.floor(seconds / 3600);
-    const minutes = Math.floor((seconds - (hours * 3600)) / 60);
-    const secondsLeft = Math.round(seconds - (hours * 3600) - (minutes * 60));
-    return `${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes}:${secondsLeft < 10 ? '0' + secondsLeft : secondsLeft}`;
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds - hours * 3600) / 60);
+  const secondsLeft = Math.round(seconds - hours * 3600 - minutes * 60);
+  return `${hours < 10 ? "0" + hours : hours}:${
+    minutes < 10 ? "0" + minutes : minutes
+  }:${secondsLeft < 10 ? "0" + secondsLeft : secondsLeft}`;
 }
 
 /**
@@ -46,7 +52,7 @@ export function secondsToHoursMinutesSeconds(seconds) {
  * @returns {number} The total number of seconds.
  */
 export function hoursMinutesSecondsToSeconds(hours, minutes, seconds) {
-    return (Number(hours) * 3600) + (Number(minutes) * 60) + Number(seconds);
+  return Number(hours) * 3600 + Number(minutes) * 60 + Number(seconds);
 }
 
 /**
@@ -55,8 +61,8 @@ export function hoursMinutesSecondsToSeconds(hours, minutes, seconds) {
  * @returns {{hours: string, minutes: string, seconds: string}} - An object with separate properties for hours, minutes, and seconds.
  */
 export function parseHoursMinutesSeconds(hoursMinutesSeconds) {
-    const [hours, minutes, seconds] = hoursMinutesSeconds.split(':');
-    return { hours, minutes, seconds };
+  const [hours, minutes, seconds] = hoursMinutesSeconds.split(":");
+  return { hours, minutes, seconds };
 }
 
 /**
@@ -66,9 +72,10 @@ export function parseHoursMinutesSeconds(hoursMinutesSeconds) {
  * @returns {Date} A new Date object representing the given date and time.
  */
 export function createDateTime(date, time) {
-    const [year, month, day] = date.split('-');
-    const [hours, minutes, seconds] = time.split(':').length === 2 ? [...time.split(':'), '00'] : time.split(':');
-    return new Date(year, month - 1, day, hours, minutes, seconds);
+  const [year, month, day] = date.split("-");
+  const [hours, minutes, seconds] =
+    time.split(":").length === 2 ? [...time.split(":"), "00"] : time.split(":");
+  return new Date(year, month - 1, day, hours, minutes, seconds);
 }
 
 /**
@@ -77,10 +84,18 @@ export function createDateTime(date, time) {
  * @param {Object} logoutTime - The logout time object containing date and time properties.
  * @returns {number} - The total time in seconds.
  */
-export function getTotalTime(loginTime, logoutTime) { 
-    const loginDateTime = createDateTime(loginTime.date, loginTime.time);
-    const logoutDateTime = createDateTime(logoutTime.date, logoutTime.time);
-    const totalTime = logoutDateTime - loginDateTime;
-    // console.log(totalTime);
-    return totalTime/1000;
+export function getTotalTime(loginTime, logoutTime) {
+  const loginDateTime = createDateTime(loginTime.date, loginTime.time);
+  const logoutDateTime = createDateTime(logoutTime.date, logoutTime.time);
+  const totalTime = logoutDateTime - loginDateTime;
+  // console.log(totalTime);
+  return totalTime / 1000;
+}
+
+export function addMinutesToDate(date, minutes) {
+  if (date == undefined) {
+    const currDate = new Date();
+    return new Date(currDate.getTime() + minutes * 60000);
+  }
+  return new Date(date.getTime() + minutes * 60000);
 }
