@@ -1,31 +1,40 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { AdminAuthContext } from "@src/main";
 import { useNavigate } from "react-router-dom";
 import {
   TextInput,
   PasswordInput,
-  Checkbox,
   Anchor,
   Paper,
   Title,
   Text,
   Container,
-  Group,
   Button,
+  Notification,
 } from "@mantine/core";
 import { URL } from "@src/constants";
 import axios from "axios";
-import { useCookies } from "react-cookie";
 
 export default function AdminLogin() {
   const { setUser } = useContext(AdminAuthContext);
   const navigate = useNavigate();
+  const [loginStatus, setLoginStatus] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [cookies, setCookie] = useCookies([]);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
+  const handleLoginStatus = (status) => {
+    setLoginStatus(status);
+    setTimeout(() => {
+      setLoginStatus("");
+    }, 3000);
+  };
+
+  const handleLogin = async () => {
+    setLoginStatus("Logging in...");
+    if (username === "" || password === "") {
+      handleLoginStatus("Please enter a username and password.");
+      return;
+    }
     try {
       const { data, headers } = await axios.post(
         `${URL}/auth/login`,
@@ -39,17 +48,22 @@ export default function AdminLogin() {
       const { success, message, token } = data;
       if (success) {
         // console.log('username:', username);
+        handleLoginStatus("Login successful");
         setUser("admin");
         localStorage.setItem("token", token);
         // console.log('user:', user);
         // setCookie("token", token);
         console.log(localStorage);
-        navigate("/admin");
+        setTimeout(() => {
+          navigate("/admin");
+        }, 500);
       } else {
         console.log("failed auth message", message);
+        handleLoginStatus("Login failed. Please try again.");
       }
     } catch (error) {
       console.log("auth error", error);
+      handleLoginStatus("Error logging in. Please try again.");
     }
   };
 
@@ -60,6 +74,12 @@ export default function AdminLogin() {
   const handlePassword = (e) => {
     setPassword(e.target.value);
   };
+
+  function handleKeyDown(e) {
+    if (e.key === "Enter") {
+      handleLogin();
+    }
+  }
 
   // return (
   //     <div>
@@ -95,11 +115,24 @@ export default function AdminLogin() {
           mt="md"
           value={password}
           onChange={handlePassword}
+          onKeyDown={handleKeyDown}
         />
         <Button fullWidth mt="xl" onClick={handleLogin}>
           Sign in
         </Button>
       </Paper>
+      {loginStatus && (
+        <Notification
+          color={
+            loginStatus.includes("Error") || loginStatus.includes("Failed")
+              ? "red"
+              : "blue"
+          }
+          onClose={() => setLoginStatus("")}
+        >
+          {loginStatus}
+        </Notification>
+      )}
     </Container>
   );
 }

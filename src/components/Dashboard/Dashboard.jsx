@@ -12,6 +12,7 @@ import {
   Text,
   Container,
   TextInput,
+  UnstyledButton,
 } from "@mantine/core";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
 import { modals } from "@mantine/modals";
@@ -26,7 +27,6 @@ import {
   deleteStudent,
   updateStudent,
 } from "@src/services/apiServices";
-import { useCookies } from "react-cookie";
 import { URL } from "@src/constants";
 import axios from "axios";
 
@@ -44,8 +44,12 @@ function Dashboard() {
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [searchVal, setSearchVal] = useState("");
   const [debounced] = useDebouncedValue(searchVal, 200);
-  const [cookies, removeCookie] = useCookies([]);
-  const [username, setUsername] = useState("");
+  const [user, setUser] = useState("");
+
+  const handleLogout = useCallback(() => {
+    localStorage.removeItem("token");
+    navigate("/admin/login");
+  }, [navigate]);
 
   useEffect(() => {
     const verifyToken = async () => {
@@ -62,14 +66,16 @@ function Dashboard() {
           },
         }
       );
-      const { status, user } = data;
-      setUsername(user);
-      return status
-        ? console.log("verified!")
-        : (localStorage.removeItem("token"), navigate("/admin/login"));
+      const { status, username } = data;
+      setUser(username);
+      if (status) {
+        console.log("verified");
+      } else {
+        handleLogout();
+      }
     };
     verifyToken();
-  }, [navigate]);
+  }, [handleLogout, navigate]);
 
   useEffect(() => {
     console.log("students", students);
@@ -209,10 +215,22 @@ function Dashboard() {
   return (
     <Container size="xl">
       <Box sx={{ padding: "20px" }}>
-        <Title order={1}>MLC Admin Home</Title>
+        <Group justify="space-between" mb={"xl"}>
+          <UnstyledButton>{user}</UnstyledButton>
+          <Title order={1}>MLC Admin Home</Title>
+          <Button onClick={handleLogout}>{"Logout"}</Button>
+        </Group>
         {showDashboard && (
           <Box>
-            <Box display={"flex"} justify="flex-start">
+            <Group justify="space-between" mb={"xl"}>
+              <TextInput
+                placeholder="Search"
+                size="sm"
+                leftSection={<IconSearch />}
+                styles={{ section: { pointerEvents: "none" } }}
+                value={searchVal}
+                onChange={(e) => setSearchVal(e.target.value)}
+              />
               <Button
                 onClick={() => handleDisplay("addStudent")}
                 color="green"
@@ -223,15 +241,7 @@ function Dashboard() {
               >
                 Add Student
               </Button>
-              <TextInput
-                placeholder="Search"
-                size="sm"
-                leftSection={<IconSearch />}
-                styles={{ section: { pointerEvents: "none" } }}
-                mb="sm"
-                value={searchVal}
-                onChange={(e) => setSearchVal(e.target.value)}
-              />
+
               <Button
                 onClick={() => handleDisplay("importStudents")}
                 color="green"
@@ -259,7 +269,7 @@ function Dashboard() {
               >
                 Export Time
               </Button>
-            </Box>
+            </Group>
             <Table striped>
               <thead>
                 <tr>
