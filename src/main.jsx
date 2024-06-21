@@ -80,18 +80,18 @@ const router = createBrowserRouter([
     path: "/admin",
     loader: studentsLoader,
     element: (
-      <AdminAuth redirectTo="/admin/login">
-        <Dashboard />
-      </AdminAuth>
+      // <AdminAuth redirectTo="/admin/login">
+      <Dashboard />
+      // </AdminAuth>
     ),
     errorElement: <ErrorPage />,
   },
   {
     path: "/admin/login",
     element: (
-      <GuestOnly redirectTo="/admin">
-        <AdminLogin />
-      </GuestOnly>
+      // <GuestOnly redirectTo="/admin">
+      <AdminLogin />
+      // </GuestOnly>
     ),
     errorElement: <ErrorPage />,
   },
