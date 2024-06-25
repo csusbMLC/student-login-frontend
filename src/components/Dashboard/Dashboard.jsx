@@ -3,7 +3,6 @@ import EditStudentForm from "@components/EditStudentForm/EditStudentForm";
 import AddStudentForm from "@components/AddStudentForm/AddStudentForm";
 import TimeLogForm from "@components/TimeLogForm/TimeLogForm";
 import {
-  Table,
   Button,
   Title,
   Box,
@@ -30,6 +29,7 @@ import {
 import { URL } from "@src/constants";
 import axios from "axios";
 import StudentTable from "@components/StudentTable/StudentTable";
+import { useDisplayState } from "@src/hooks/useDisplayState";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -37,11 +37,16 @@ function Dashboard() {
   const [opened, { open, close }] = useDisclosure(false);
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [showAddStudentForm, setShowAddStudentForm] = useState(false);
-  const [showEditStudentForm, setShowEditStudentForm] = useState(false);
-  const [showTimeLogForm, setShowTimeLogForm] = useState(false);
-  const [showImportStudentsForm, setShowImportStudentsForm] = useState(false); // change this to false before pushing to main
-  const [showDashboard, setShowDashboard] = useState(true); // change this to true before pushing to main
+  const [
+    {
+      showDashboard,
+      showAddStudentForm,
+      showEditStudentForm,
+      showImportStudentsForm,
+      showTimeLogForm,
+    },
+    handleDisplay,
+  ] = useDisplayState();
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [searchVal, setSearchVal] = useState("");
   const [debounced] = useDebouncedValue(searchVal, 200);
@@ -86,13 +91,13 @@ function Dashboard() {
 
   const handleEdit = (index) => {
     setSelectedStudent(filteredData[index]);
-    handleDisplay("editStudent");
+    handleDisplay("showEditStudentForm");
   };
 
   const handleTimeLog = (index) => {
     setSelectedStudent(filteredData[index]);
     // setShowTimeLogForm(true);
-    handleDisplay("timeLog");
+    handleDisplay("showTimeLogForm");
   };
 
   const handleSave = (updatedStudent) => {
@@ -141,13 +146,13 @@ function Dashboard() {
           handleDisplay();
         } else {
           window.alert("Failed to add student");
-          handleDisplay("addStudent");
+          handleDisplay("showAddStudentForm");
         }
       })
       .catch((error) => {
         window.alert("Failed to add student");
         console.log(error);
-        handleDisplay("addStudent");
+        handleDisplay("showAddStudentForm");
       });
   };
 
@@ -185,30 +190,6 @@ function Dashboard() {
     handleSearch();
   }, [debounced, data, handleSearch]);
 
-  function handleDisplay(showState = "") {
-    setShowAddStudentForm(false);
-    setShowEditStudentForm(false);
-    setShowTimeLogForm(false);
-    setShowImportStudentsForm(false);
-    setShowDashboard(false);
-    switch (showState) {
-      case "addStudent":
-        setShowAddStudentForm(true);
-        break;
-      case "editStudent":
-        setShowEditStudentForm(true);
-        break;
-      case "timeLog":
-        setShowTimeLogForm(true);
-        break;
-      case "importStudents":
-        setShowImportStudentsForm(true);
-        break;
-      default:
-        setShowDashboard(true);
-    }
-  }
-
   const cancelView = () => {
     handleDisplay();
   };
@@ -233,7 +214,7 @@ function Dashboard() {
                 onChange={(e) => setSearchVal(e.target.value)}
               />
               <Button
-                onClick={() => handleDisplay("addStudent")}
+                onClick={() => handleDisplay("showAddStudentForm")}
                 color="green"
                 variant="filled"
                 style={{}}
@@ -244,7 +225,7 @@ function Dashboard() {
               </Button>
 
               <Button
-                onClick={() => handleDisplay("importStudents")}
+                onClick={() => handleDisplay("showImportStudentsForm")}
                 color="green"
                 variant="filled"
                 style={{}}
