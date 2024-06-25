@@ -29,6 +29,7 @@ import {
 } from "@src/services/apiServices";
 import { URL } from "@src/constants";
 import axios from "axios";
+import StudentTable from "@components/StudentTable/StudentTable";
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -270,90 +271,12 @@ function Dashboard() {
                 Export Time
               </Button>
             </Group>
-            <Table striped>
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Student ID</th>
-                  <th>Classes</th>
-                  <th>Total Time Logged (hours)</th>
-                  {/* <th>Time Log</th> */}
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody className="students-body">
-                {filteredData.map((item, index) => {
-                  const { studentName, studentId, classes, loginTimestamps } =
-                    item;
-                  let timePerClassMap = new Map();
-                  loginTimestamps.forEach((timestamp) => {
-                    // console.log('timestamp', timestamp);
-                    if (timePerClassMap.has(timestamp.className)) {
-                      timePerClassMap.set(
-                        timestamp.className,
-                        timePerClassMap.get(timestamp.className) +
-                          timestamp.totalTime
-                      );
-                    } else {
-                      timePerClassMap.set(
-                        timestamp.className,
-                        timestamp.totalTime
-                      );
-                    }
-                  });
-                  const formattedTimePerClass = Array.from(timePerClassMap).map(
-                    ([className, totalTime]) => {
-                      return `${className}: ${(totalTime / 3600).toFixed(2)}`;
-                    }
-                  );
-                  return (
-                    <tr key={studentId}>
-                      <td>{studentName}</td>
-                      <td>{studentId}</td>
-                      <td>{classes.join(", ")}</td>
-                      {/*<td>{((loginTimestamps.reduce((acc, curr) => curr.totalTime + acc, 0) / 3600)).toFixed(2)}</td>*/}
-                      <td>
-                        {formattedTimePerClass.length
-                          ? formattedTimePerClass.join(", ")
-                          : "No Time Logged"}
-                      </td>
-                      <td>
-                        <Group>
-                          <Button
-                            onClick={() => handleTimeLog(index)}
-                            className="btn-view-log"
-                            color="blue"
-                            variant="filled"
-                            autoContrast
-                          >
-                            Time Log
-                          </Button>
-                          <Button
-                            onClick={() => handleEdit(index)}
-                            className="btn-edit"
-                            color="yellow"
-                            variant="filled"
-                            autoContrast
-                          >
-                            Edit Student
-                          </Button>
-                          {/* <Button onClick={() => handleDelete(index)}>Delete</Button> */}
-                          <Button
-                            onClick={() => openDeleteModal(index)}
-                            className="btn-delete"
-                            color="red"
-                            variant="filled"
-                            autoContrast
-                          >
-                            Delete
-                          </Button>
-                        </Group>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
+            <StudentTable
+              studentData={filteredData}
+              handleTimeLog={handleTimeLog}
+              handleEdit={handleEdit}
+              openDeleteModal={openDeleteModal}
+            />
           </Box>
         )}
         {showTimeLogForm && (
