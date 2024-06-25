@@ -117,7 +117,15 @@ export default function AdminLogin() {
           onChange={handlePassword}
           onKeyDown={handleKeyDown}
         />
-        <Button fullWidth mt="xl" onClick={handleLogin}>
+        <Button
+          fullWidth
+          mt="xl"
+          onClick={handleLogin}
+          disabled={
+            loginStatus === "Logging in..." ||
+            loginStatus === "Login successful"
+          }
+        >
           Sign in
         </Button>
       </Paper>
