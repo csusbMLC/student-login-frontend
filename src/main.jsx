@@ -80,18 +80,18 @@ const router = createBrowserRouter([
     path: "/admin",
     loader: studentsLoader,
     element: (
-      <AdminAuth redirectTo="/admin/login">
-        <Dashboard />
-      </AdminAuth>
+      // <AdminAuth redirectTo="/admin/login">
+      <Dashboard />
+      // </AdminAuth>
     ),
     errorElement: <ErrorPage />,
   },
   {
     path: "/admin/login",
     element: (
-      <GuestOnly redirectTo="/admin">
-        <AdminLogin />
-      </GuestOnly>
+      // <GuestOnly redirectTo="/admin">
+      <AdminLogin />
+      // </GuestOnly>
     ),
     errorElement: <ErrorPage />,
   },
@@ -105,17 +105,9 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
-  <React.StrictMode>
-    <MantineProvider
-      withGlobalStyles
-      withNormalizeCSS
-      defaultColorScheme="auto"
-    >
-      <ModalsProvider>
-        <AdminContextProvider>
-          <RouterProvider router={router} />
-        </AdminContextProvider>
-      </ModalsProvider>
-    </MantineProvider>
-  </React.StrictMode>
+  <MantineProvider withGlobalStyles withNormalizeCSS defaultColorScheme="auto">
+    <ModalsProvider>
+      <RouterProvider router={router} />
+    </ModalsProvider>
+  </MantineProvider>
 );
