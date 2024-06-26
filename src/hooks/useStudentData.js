@@ -1,9 +1,12 @@
 import { useState } from "react";
-import { addStudent, deleteStudent } from "@src/services/apiServices";
+import {
+  addStudent,
+  deleteStudent,
+  updateStudent,
+} from "@src/services/apiServices";
 
 export const useStudentData = (initialData = []) => {
   const [data, setData] = useState(initialData);
-  const [filteredData, setFilteredData] = useState(initialData);
 
   const handleAddStudent = async (
     student,
@@ -49,22 +52,48 @@ export const useStudentData = (initialData = []) => {
     }
   };
 
-  const handleUpdateStudent = async (student) => {
-    // Logic to update student
+  const handleUpdateStudent = async (
+    updatedStudent,
+    onSuccess = null,
+    onError = null
+  ) => {
+    const newData = data.map((student) =>
+      student.studentId === updatedStudent.studentId ? updatedStudent : student
+    );
+    try {
+      const response = await updateStudent(
+        updatedStudent.studentId,
+        updatedStudent
+      );
+      if (response.success) {
+        setData(newData);
+        window.alert("Student updated successfully");
+        onSuccess ? onSuccess() : null;
+      } else {
+        window.alert("Failed to update student" + response.message);
+        onError ? onError() : null;
+      }
+    } catch (error) {
+      console.log(error);
+      window.alert("Error updating student!");
+      onError ? onError() : null;
+    }
   };
 
   const filterStudents = (searchTerm) => {
-    // Logic to filter students
+    return data.filter(
+      (student) =>
+        student.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        student.studentId.toLowerCase().includes(searchTerm.toLowerCase())
+    );
   };
 
   return {
     data,
-    filteredData,
     handleAddStudent,
     handleDeleteStudent,
     handleUpdateStudent,
     filterStudents,
     setData,
-    setFilteredData,
   };
 };

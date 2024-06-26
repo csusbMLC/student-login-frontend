@@ -21,11 +21,6 @@ import { IconSearch } from "@tabler/icons-react";
 import "./Dashboard.css";
 import ExportStudents from "@components/ExportStudents/ExportStudents";
 import { useLoaderData, useNavigate } from "react-router-dom";
-import {
-  addStudent,
-  deleteStudent,
-  updateStudent,
-} from "@src/services/apiServices";
 import { URL } from "@src/constants";
 import axios from "axios";
 import StudentTable from "@components/StudentTable/StudentTable";
@@ -38,14 +33,11 @@ function Dashboard() {
   const [opened, { open, close }] = useDisclosure(false);
   const {
     data,
-    setData,
-    filteredData,
-    setFilteredData,
     handleAddStudent,
     handleDeleteStudent,
+    handleUpdateStudent,
+    filterStudents,
   } = useStudentData(students);
-  // const [data, setData] = useState([]);
-  // const [filteredData, setFilteredData] = useState([]);
   const [
     {
       showDashboard,
@@ -56,7 +48,7 @@ function Dashboard() {
     },
     handleDisplay,
   ] = useDisplayState();
-  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [selectedStudent, setSelectedStudent] = useState("");
   const [searchVal, setSearchVal] = useState("");
   const [debounced] = useDebouncedValue(searchVal, 200);
   const [user, setUser] = useState("");
@@ -92,57 +84,15 @@ function Dashboard() {
     verifyToken();
   }, [handleLogout, navigate]);
 
-  // useEffect(() => {
-  //   console.log("students", students);
-  //   setData(students);
-  //   setFilteredData(students);
-  // }, [students]);
-
-  const handleEdit = (index) => {
-    setSelectedStudent(filteredData[index]);
+  const handleEdit = (studentId) => {
+    setSelectedStudent(studentId);
     handleDisplay("showEditStudentForm");
   };
 
-  const handleTimeLog = (index) => {
-    setSelectedStudent(filteredData[index]);
-    // setShowTimeLogForm(true);
+  const handleTimeLog = (studentId) => {
+    setSelectedStudent(studentId);
     handleDisplay("showTimeLogForm");
   };
-
-  const handleSave = (updatedStudent) => {
-    const newData = [...data];
-    const index = newData.findIndex(
-      (student) => student.studentId === updatedStudent.studentId
-    );
-    newData[index] = updatedStudent;
-    // send the updated data to the server
-    updateStudent(updatedStudent.studentId, updatedStudent)
-      .then((data) => {
-        console.log("success", data);
-        setData(newData);
-        window.alert(data.message);
-        handleDisplay();
-      })
-      .catch((error) => {
-        console.log(error);
-        window.alert("Failed to update student");
-      });
-  };
-
-  // const handleDelete = (studentId) => {
-  //   const newData = data.filter((student) => student.studentId !== studentId);
-  //   // delete the student from the server
-  //   deleteStudent(studentId)
-  //     .then((data) => {
-  //       console.log("success", studentId, data);
-  //       setData(newData);
-  //       window.alert(data.message);
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);
-  //       alert("Failed to delete student");
-  //     });
-  // };
 
   const openDeleteModal = (studentId) =>
     modals.openConfirmModal({
@@ -159,26 +109,6 @@ function Dashboard() {
       onCancel: () => console.log("canceled"),
       onConfirm: () => handleDeleteStudent(studentId),
     });
-
-  const handleSearch = useCallback(() => {
-    if (debounced) {
-      setFilteredData(
-        data.filter(
-          (student) =>
-            student.studentName
-              .toLowerCase()
-              .includes(debounced.toLowerCase()) ||
-            student.studentId.toLowerCase().includes(debounced.toLowerCase())
-        )
-      );
-    } else {
-      setFilteredData(data);
-    }
-  }, [debounced, data]);
-
-  useEffect(() => {
-    handleSearch();
-  }, [debounced, data, handleSearch]);
 
   return (
     <Container size="xl">
@@ -239,7 +169,7 @@ function Dashboard() {
               </Button>
             </Group>
             <StudentTable
-              studentData={filteredData}
+              studentData={filterStudents(debounced)}
               handleTimeLog={handleTimeLog}
               handleEdit={handleEdit}
               openDeleteModal={openDeleteModal}
@@ -248,15 +178,19 @@ function Dashboard() {
         )}
         {showTimeLogForm && (
           <TimeLogForm
-            student={selectedStudent}
-            onSave={handleSave}
+            student={data.find(
+              (student) => student.studentId === selectedStudent
+            )}
+            onSave={handleUpdateStudent}
             onCancel={handleDisplay}
           />
         )}
         {showEditStudentForm && (
           <EditStudentForm
-            student={selectedStudent}
-            onSave={handleSave}
+            student={data.find(
+              (student) => student.studentId === selectedStudent
+            )}
+            onSave={handleUpdateStudent}
             onCancel={handleDisplay}
           />
         )}

@@ -6,11 +6,10 @@ export default function StudentTable({
   handleEdit,
   openDeleteModal,
 }) {
-  const rows = studentData.map((item, index) => {
+  const rows = studentData.map((item) => {
     const { studentName, studentId, classes, loginTimestamps } = item;
     let timePerClassMap = new Map();
     loginTimestamps.forEach((timestamp) => {
-      // console.log('timestamp', timestamp);
       if (timePerClassMap.has(timestamp.className)) {
         timePerClassMap.set(
           timestamp.className,
@@ -39,7 +38,7 @@ export default function StudentTable({
         <Table.Td>
           <Group>
             <Button
-              onClick={() => handleTimeLog(index)}
+              onClick={() => handleTimeLog(studentId)}
               className="btn-view-log"
               color="blue"
               variant="filled"
@@ -48,7 +47,7 @@ export default function StudentTable({
               Time Log
             </Button>
             <Button
-              onClick={() => handleEdit(index)}
+              onClick={() => handleEdit(studentId)}
               className="btn-edit"
               color="yellow"
               variant="filled"
