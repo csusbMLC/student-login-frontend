@@ -17,8 +17,7 @@ function App() {
         {" "}
         {/* Controls max width */}
         <Title order={2} c="red" align="center">
-          WARNING: DO NOT CLOSE THIS WINDOW UNTIL YOU LOGIN OR YOUR TIME{" "}
-          {"WON'T"} BE RECORDED
+          WARNING: DO NOT CLOSE THIS WINDOW OR YOUR TIME {"WON'T"} BE RECORDED
         </Title>
         <Paper p={"lg"} shadow="xs">
           {" "}

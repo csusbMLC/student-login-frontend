@@ -13,6 +13,12 @@ import {
 import { IconTrash } from "@tabler/icons-react";
 import { useForm } from "@mantine/form";
 
+/**
+ * Retrieves the class name from a given class item.
+ *
+ * @param {string} classItem - The class item to extract the class name from.
+ * @returns {string} The extracted class name.
+ */
 function getClassName(classItem) {
   try {
     let classRegex = /\b[A-Z]+ \d+\b/;
@@ -28,6 +34,12 @@ function getClassName(classItem) {
   }
 }
 
+/**
+ * Retrieves the section from a class item.
+ *
+ * @param {string} classItem - The class item to extract the section from.
+ * @returns {string} The extracted section from the class item.
+ */
 function getClassSection(classItem) {
   try {
     let sectionRegex = /-\d{2}-/;
@@ -43,6 +55,12 @@ function getClassSection(classItem) {
   }
 }
 
+/**
+ * Retrieves the professor name from a given class item.
+ *
+ * @param {string} classItem - The class item to extract the professor name from.
+ * @returns {string} The professor name extracted from the class item.
+ */
 function getProfessor(classItem) {
   try {
     let nameRegex = /[A-Za-z]+(?:-[A-Za-z]+)?$/;
@@ -58,6 +76,16 @@ function getProfessor(classItem) {
   }
 }
 
+/**
+ * EditStudentForm component.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Object} props.student - The student object.
+ * @param {Function} props.onSave - The function to save the updated student.
+ * @param {Function} props.onCancel - The function to cancel editing.
+ * @returns {JSX.Element} The EditStudentForm component.
+ */
 function EditStudentForm({ student, onSave, onCancel }) {
   // (() => {
   // getProfessor('CSE 1100-01-Gonzales-Rios');
