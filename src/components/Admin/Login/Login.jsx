@@ -1,5 +1,4 @@
-import { useContext, useState } from "react";
-import { AdminAuthContext } from "@src/main";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   TextInput,
@@ -15,8 +14,7 @@ import {
 import { URL } from "@src/constants";
 import axios from "axios";
 
-export default function AdminLogin() {
-  const { setUser } = useContext(AdminAuthContext);
+export default function Login() {
   const navigate = useNavigate();
   const [loginStatus, setLoginStatus] = useState("");
   const [username, setUsername] = useState("");
@@ -49,7 +47,6 @@ export default function AdminLogin() {
       if (success) {
         // console.log('username:', username);
         handleLoginStatus("Login successful");
-        setUser("admin");
         localStorage.setItem("token", token);
         // console.log('user:', user);
         // setCookie("token", token);

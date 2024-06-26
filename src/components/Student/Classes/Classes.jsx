@@ -46,7 +46,8 @@ function LoggedOutSection({ handleLogin }) {
  */
 function Classes({ setStudent = null }) {
   const { studentId } = useParams();
-  const { classes, studentName } = useLoaderData();
+  const { student } = useLoaderData();
+  const { studentName, classes } = student;
   const [selectedClass, setSelectedClass] = useState("");
   const { timer, startTimer, stopTimer } = useTimer(0);
   const navigate = useNavigate();

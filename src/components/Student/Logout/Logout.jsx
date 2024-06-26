@@ -10,7 +10,8 @@ import { useLoaderData } from "react-router-dom";
  * @returns {JSX.Element} The rendered Logout component.
  */
 const Logout = () => {
-  const { loginTimestamps, lastClass } = useLoaderData();
+  const { student } = useLoaderData();
+  const { loginTimestamps, lastClass } = student;
 
   return (
     <Stack>
