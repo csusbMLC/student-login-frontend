@@ -30,13 +30,22 @@ import { URL } from "@src/constants";
 import axios from "axios";
 import StudentTable from "@components/StudentTable/StudentTable";
 import { useDisplayState } from "@src/hooks/useDisplayState";
+import { useStudentData } from "@src/hooks/useStudentData";
 
 function Dashboard() {
   const navigate = useNavigate();
-  const students = useLoaderData();
+  const { students } = useLoaderData();
   const [opened, { open, close }] = useDisclosure(false);
-  const [data, setData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  const {
+    data,
+    setData,
+    filteredData,
+    setFilteredData,
+    handleAddStudent,
+    handleDeleteStudent,
+  } = useStudentData(students);
+  // const [data, setData] = useState([]);
+  // const [filteredData, setFilteredData] = useState([]);
   const [
     {
       showDashboard,
@@ -83,11 +92,11 @@ function Dashboard() {
     verifyToken();
   }, [handleLogout, navigate]);
 
-  useEffect(() => {
-    console.log("students", students);
-    setData(students);
-    setFilteredData(students);
-  }, [students]);
+  // useEffect(() => {
+  //   console.log("students", students);
+  //   setData(students);
+  //   setFilteredData(students);
+  // }, [students]);
 
   const handleEdit = (index) => {
     setSelectedStudent(filteredData[index]);
@@ -106,7 +115,6 @@ function Dashboard() {
       (student) => student.studentId === updatedStudent.studentId
     );
     newData[index] = updatedStudent;
-    // setData(newData);
     // send the updated data to the server
     updateStudent(updatedStudent.studentId, updatedStudent)
       .then((data) => {
@@ -121,53 +129,35 @@ function Dashboard() {
       });
   };
 
-  const handleDelete = (index) => {
-    const studentId = filteredData[index].studentId;
-    const newData = data.filter((student) => student.studentId !== studentId);
-    // delete the student from the server
-    deleteStudent(studentId)
-      .then((data) => {
-        console.log("success", studentId, data);
-        setData(newData);
-        window.alert(data.message);
-      })
-      .catch((error) => {
-        console.log(error);
-        alert("Failed to delete student");
-      });
-  };
+  // const handleDelete = (studentId) => {
+  //   const newData = data.filter((student) => student.studentId !== studentId);
+  //   // delete the student from the server
+  //   deleteStudent(studentId)
+  //     .then((data) => {
+  //       console.log("success", studentId, data);
+  //       setData(newData);
+  //       window.alert(data.message);
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //       alert("Failed to delete student");
+  //     });
+  // };
 
-  const handleAddStudentSubmit = (newStudent) => {
-    addStudent(newStudent)
-      .then((res) => {
-        if (res.status === "Success") {
-          setData([...data, res.student]);
-          window.alert("Student added successfully");
-          handleDisplay();
-        } else {
-          window.alert("Failed to add student");
-          handleDisplay("showAddStudentForm");
-        }
-      })
-      .catch((error) => {
-        window.alert("Failed to add student");
-        console.log(error);
-        handleDisplay("showAddStudentForm");
-      });
-  };
-
-  const openDeleteModal = (index) =>
+  const openDeleteModal = (studentId) =>
     modals.openConfirmModal({
       title: "Delete Student",
       centered: true,
       children: (
-        <Text size="sm">Are you sure you want to delete this student?</Text>
+        <Text size="sm">
+          Are you sure you want to delete {studentId} student?
+        </Text>
       ),
       labels: { cancel: "Cancel", confirm: "Delete" },
       confirmProps: { color: "red", variant: "filled", autoContrast: true },
       cancelProps: { color: "black", variant: "default", autoContrast: true },
       onCancel: () => console.log("canceled"),
-      onConfirm: () => handleDelete(index),
+      onConfirm: () => handleDeleteStudent(studentId),
     });
 
   const handleSearch = useCallback(() => {
@@ -189,10 +179,6 @@ function Dashboard() {
   useEffect(() => {
     handleSearch();
   }, [debounced, data, handleSearch]);
-
-  const cancelView = () => {
-    handleDisplay();
-  };
 
   return (
     <Container size="xl">
@@ -264,24 +250,24 @@ function Dashboard() {
           <TimeLogForm
             student={selectedStudent}
             onSave={handleSave}
-            onCancel={cancelView}
+            onCancel={handleDisplay}
           />
         )}
         {showEditStudentForm && (
           <EditStudentForm
             student={selectedStudent}
             onSave={handleSave}
-            onCancel={cancelView}
+            onCancel={handleDisplay}
           />
         )}
         {showAddStudentForm && (
           <AddStudentForm
-            onSubmit={handleAddStudentSubmit}
-            onCancel={cancelView}
+            onSubmit={handleAddStudent}
+            onCancel={handleDisplay}
           />
         )}
         {showImportStudentsForm && (
-          <ImportStudents students={data} onCancel={cancelView} />
+          <ImportStudents students={data} onCancel={handleDisplay} />
         )}
       </Box>
     </Container>

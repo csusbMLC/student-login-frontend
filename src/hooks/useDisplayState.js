@@ -20,7 +20,7 @@ export function useDisplayState(
       showTimeLogForm: false,
       showImportStudentsForm: false,
     };
-    if (showState) {
+    if (Object.keys(newState).includes(showState)) {
       newState[showState] = true;
     } else {
       newState.showDashboard = true;

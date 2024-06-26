@@ -26,7 +26,7 @@ export default function StudentTable({
       }
     );
     return (
-      <Table.Tr key={studentId}>
+      <Table.Tr key={studentId} id={studentId}>
         <Table.Td>{studentName}</Table.Td>
         <Table.Td>{studentId}</Table.Td>
         <Table.Td>{classes.join(", ")}</Table.Td>
@@ -58,7 +58,10 @@ export default function StudentTable({
             </Button>
             {/* <Button onClick={() => handleDelete(index)}>Delete</Button> */}
             <Button
-              onClick={() => openDeleteModal(index)}
+              onClick={(e) => {
+                console.log(studentId);
+                openDeleteModal(studentId);
+              }}
               className="btn-delete"
               color="red"
               variant="filled"
