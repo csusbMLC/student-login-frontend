@@ -16,6 +16,11 @@ import { useStudentData } from "@src/hooks/useStudentData";
 import { useAuth } from "@src/hooks/useAuth";
 import SearchAndActions from "@components/Admin/SearchAndActions/SearchAndActions";
 
+/**
+ * Renders the dashboard component which is the root component for the admin section.
+ *
+ * @returns {JSX.Element} The dashboard component.
+ */
 function Dashboard() {
   const { students } = useLoaderData();
   const {

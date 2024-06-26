@@ -1,6 +1,11 @@
 import { Box, Text, Title, Blockquote, Button } from "@mantine/core";
 import { useNavigate, useRouteError } from "react-router-dom";
 
+/**
+ * Renders the error page component when an error occurs in the application.
+ *
+ * @returns {JSX.Element} The rendered error page component.
+ */
 export default function ErrorPage() {
   const error = useRouteError();
   const navigate = useNavigate();

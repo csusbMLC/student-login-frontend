@@ -14,12 +14,20 @@ import {
 import { URL } from "@src/constants";
 import axios from "axios";
 
+/**
+ * Login component for the admin page.
+ * Allows users to log in with a username and password.
+ */
 export default function Login() {
   const navigate = useNavigate();
   const [loginStatus, setLoginStatus] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
+  /**
+   * Sets the login status message and clears it after a delay.
+   * @param {string} status - The login status message.
+   */
   const handleLoginStatus = (status) => {
     setLoginStatus(status);
     setTimeout(() => {
@@ -27,6 +35,12 @@ export default function Login() {
     }, 3000);
   };
 
+  /**
+   * Handles the login process.
+   * Sends a POST request to the server with the username and password.
+   * If successful, sets the login status to "Login successful" and navigates to the admin page.
+   * If unsuccessful, sets the login status to "Login failed. Please try again."
+   */
   const handleLogin = async () => {
     setLoginStatus("Logging in...");
     if (username === "" || password === "") {
@@ -34,7 +48,7 @@ export default function Login() {
       return;
     }
     try {
-      const { data, headers } = await axios.post(
+      const { data } = await axios.post(
         `${URL}/auth/login`,
         {
           username,
@@ -42,52 +56,49 @@ export default function Login() {
         }
         // { withCredentials: true }
       );
-      console.log("auth login data", data, headers);
       const { success, message, token } = data;
       if (success) {
-        // console.log('username:', username);
         handleLoginStatus("Login successful");
         localStorage.setItem("token", token);
-        // console.log('user:', user);
-        // setCookie("token", token);
-        console.log(localStorage);
         setTimeout(() => {
           navigate("/admin");
         }, 500);
       } else {
-        console.log("failed auth message", message);
         handleLoginStatus("Login failed. Please try again.");
+        console.log("Login failed:", message);
       }
     } catch (error) {
-      console.log("auth error", error);
       handleLoginStatus("Error logging in. Please try again.");
+      console.log("Error logging in:", error.message);
     }
   };
 
+  /**
+   * Handles changes to the username input field.
+   * @param {object} e - The event object.
+   */
   const handleUsername = (e) => {
     setUsername(e.target.value);
   };
 
+  /**
+   * Handles changes to the password input field.
+   * @param {object} e - The event object.
+   */
   const handlePassword = (e) => {
     setPassword(e.target.value);
   };
 
+  /**
+   * Handles the keydown event on the password input field.
+   * If the Enter key is pressed, calls the handleLogin function.
+   * @param {object} e - The event object.
+   */
   function handleKeyDown(e) {
     if (e.key === "Enter") {
       handleLogin();
     }
   }
-
-  // return (
-  //     <div>
-  //         <h1>Admin Login</h1>
-  //         <form onSubmit={handleLogin}>
-  //             <input value={username} onChange={(e) => handleUsername(e)} type="text" placeholder="Username" />
-  //             <input value={password} onChange={(e) => handlePassword(e)} type="password" placeholder="Password" />
-  //             <button type="submit">Login</button>
-  //         </form>
-  //     </div>
-  // );
 
   return (
     <Container size={420} my={40}>
@@ -131,6 +142,8 @@ export default function Login() {
           color={
             loginStatus.includes("Error") || loginStatus.includes("Failed")
               ? "red"
+              : loginStatus.includes("successful")
+              ? "green"
               : "blue"
           }
           onClose={() => setLoginStatus("")}

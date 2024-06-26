@@ -1,3 +1,14 @@
+/**
+ * SearchAndActions component displays a search input field and action buttons.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {string} props.searchVal - The current value of the search input field.
+ * @param {Function} props.setSearchVal - A function to update the value of the search input field.
+ * @param {Function} props.handleDisplay - A function to handle the display of different components.
+ * @param {Array} props.data - An array of data used for exporting students.
+ * @returns {JSX.Element} The rendered SearchAndActions component.
+ */
 import { Group, TextInput, Button, Modal } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import ExportStudents from "@components/Admin/ExportStudents/ExportStudents";

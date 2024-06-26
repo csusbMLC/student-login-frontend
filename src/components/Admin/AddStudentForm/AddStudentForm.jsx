@@ -14,6 +14,12 @@ import { IconTrash } from "@tabler/icons-react";
 import { useForm } from "@mantine/form";
 import { getStudent } from "@src/services/apiServices";
 
+/**
+ * Checks if a student exists based on the provided student ID.
+ *
+ * @param {string} studentId - The ID of the student to check.
+ * @returns {Promise<boolean>} - A promise that resolves to a boolean indicating whether the student exists or not.
+ */
 const studentExists = async (studentId) => {
   try {
     const student = await getStudent(studentId);
@@ -23,6 +29,15 @@ const studentExists = async (studentId) => {
   }
 };
 
+/**
+ * AddStudentForm component displays a form to add a new student.
+ *
+ * @component
+ * @param {Object} props - The component props.
+ * @param {Function} props.onSubmit - The function to handle form submission.
+ * @param {Function} props.onCancel - The function to handle form cancellation.
+ * @returns {JSX.Element} The rendered AddStudentForm component.
+ */
 const AddStudentForm = ({ onSubmit, onCancel }) => {
   const handleAddClass = () => {
     const newClass = {
@@ -33,6 +48,9 @@ const AddStudentForm = ({ onSubmit, onCancel }) => {
     form.insertListItem("classes", newClass);
   };
 
+  /**
+   * Handles the form submission for adding a new student.
+   */
   const handleSubmit = () => {
     studentExists(form.values.studentId).then((duplicateStudent) => {
       if (!duplicateStudent) {
@@ -54,6 +72,19 @@ const AddStudentForm = ({ onSubmit, onCancel }) => {
     });
   };
 
+  /**
+   * Represents a form object used for managing form state and validation.
+   *
+   * @typedef {Object} Form
+   * @property {Object} initialValues - The initial values for the form fields.
+   * @property {Object} validate - The validation rules for the form fields.
+   * @property {Function} validate.name - The validation function for the "name" field.
+   * @property {Function} validate.studentId - The validation function for the "studentId" field.
+   * @property {Object} validate.classes - The validation rules for the "classes" field.
+   * @property {Function} validate.classes.className - The validation function for the "className" field in the "classes" array.
+   * @property {Function} validate.classes.section - The validation function for the "section" field in the "classes" array.
+   * @property {Function} validate.classes.professor - The validation function for the "professor" field in the "classes" array.
+   */
   const form = useForm({
     initialValues: {
       name: "",

@@ -1,3 +1,19 @@
+/**
+ * Renders a table of student data with various actions.
+ *
+ * @component
+ * @param {Object[]} studentData - An array of student data objects.
+ * @param {string} studentData[].studentName - The name of the student.
+ * @param {string} studentData[].studentId - The ID of the student.
+ * @param {string[]} studentData[].classes - An array of classes the student is enrolled in.
+ * @param {Object[]} studentData[].loginTimestamps - An array of login timestamps for the student.
+ * @param {string} studentData[].loginTimestamps[].className - The name of the class.
+ * @param {number} studentData[].loginTimestamps[].totalTime - The total time logged for the class in seconds.
+ * @param {Function} handleTimeLog - A function to handle time log action for a student.
+ * @param {Function} handleEdit - A function to handle edit action for a student.
+ * @param {Function} handleDeleteStudent - A function to handle delete action for a student.
+ * @returns {JSX.Element} The rendered StudentTable component.
+ */
 import { Table, Button, Group, Text } from "@mantine/core";
 import { modals } from "@mantine/modals";
 
