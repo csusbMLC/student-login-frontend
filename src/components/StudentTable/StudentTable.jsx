@@ -1,11 +1,27 @@
-import { Table, Button, Group } from "@mantine/core";
+import { Table, Button, Group, Text } from "@mantine/core";
+import { modals } from "@mantine/modals";
 
 export default function StudentTable({
   studentData,
   handleTimeLog,
   handleEdit,
-  openDeleteModal,
+  handleDeleteStudent,
 }) {
+  const openDeleteModal = (studentId) =>
+    modals.openConfirmModal({
+      title: "Delete Student",
+      centered: true,
+      children: (
+        <Text size="sm">
+          Are you sure you want to delete {studentId} student?
+        </Text>
+      ),
+      labels: { cancel: "Cancel", confirm: "Delete" },
+      confirmProps: { color: "red", variant: "filled", autoContrast: true },
+      cancelProps: { color: "black", variant: "default", autoContrast: true },
+      onCancel: () => console.log("canceled"),
+      onConfirm: () => handleDeleteStudent(studentId),
+    });
   const rows = studentData.map((item) => {
     const { studentName, studentId, classes, loginTimestamps } = item;
     let timePerClassMap = new Map();
@@ -57,7 +73,7 @@ export default function StudentTable({
             </Button>
             {/* <Button onClick={() => handleDelete(index)}>Delete</Button> */}
             <Button
-              onClick={(e) => {
+              onClick={() => {
                 console.log(studentId);
                 openDeleteModal(studentId);
               }}

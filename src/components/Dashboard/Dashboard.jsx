@@ -8,13 +8,11 @@ import {
   Box,
   Modal,
   Group,
-  Text,
   Container,
   TextInput,
   UnstyledButton,
 } from "@mantine/core";
 import { useDebouncedValue, useDisclosure } from "@mantine/hooks";
-import { modals } from "@mantine/modals";
 import ImportStudents from "@components/ImportStudents/ImportStudents";
 import { IconSearch } from "@tabler/icons-react";
 
@@ -26,9 +24,9 @@ import axios from "axios";
 import StudentTable from "@components/StudentTable/StudentTable";
 import { useDisplayState } from "@src/hooks/useDisplayState";
 import { useStudentData } from "@src/hooks/useStudentData";
+import { useAuth } from "@src/hooks/useAuth";
 
 function Dashboard() {
-  const navigate = useNavigate();
   const { students } = useLoaderData();
   const [opened, { open, close }] = useDisclosure(false);
   const {
@@ -51,38 +49,7 @@ function Dashboard() {
   const [selectedStudent, setSelectedStudent] = useState("");
   const [searchVal, setSearchVal] = useState("");
   const [debounced] = useDebouncedValue(searchVal, 200);
-  const [user, setUser] = useState("");
-
-  const handleLogout = useCallback(() => {
-    localStorage.removeItem("token");
-    navigate("/admin/login");
-  }, [navigate]);
-
-  useEffect(() => {
-    const verifyToken = async () => {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        navigate("/admin/login");
-      }
-      const { data } = await axios.post(
-        `${URL}/auth/`,
-        {},
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-      const { status, username } = data;
-      setUser(username);
-      if (status) {
-        console.log("verified");
-      } else {
-        handleLogout();
-      }
-    };
-    verifyToken();
-  }, [handleLogout, navigate]);
+  const { user, handleLogout } = useAuth();
 
   const handleEdit = (studentId) => {
     setSelectedStudent(studentId);
@@ -93,22 +60,6 @@ function Dashboard() {
     setSelectedStudent(studentId);
     handleDisplay("showTimeLogForm");
   };
-
-  const openDeleteModal = (studentId) =>
-    modals.openConfirmModal({
-      title: "Delete Student",
-      centered: true,
-      children: (
-        <Text size="sm">
-          Are you sure you want to delete {studentId} student?
-        </Text>
-      ),
-      labels: { cancel: "Cancel", confirm: "Delete" },
-      confirmProps: { color: "red", variant: "filled", autoContrast: true },
-      cancelProps: { color: "black", variant: "default", autoContrast: true },
-      onCancel: () => console.log("canceled"),
-      onConfirm: () => handleDeleteStudent(studentId),
-    });
 
   return (
     <Container size="xl">
@@ -172,7 +123,7 @@ function Dashboard() {
               studentData={filterStudents(debounced)}
               handleTimeLog={handleTimeLog}
               handleEdit={handleEdit}
-              openDeleteModal={openDeleteModal}
+              handleDelete={handleDeleteStudent}
             />
           </Box>
         )}
