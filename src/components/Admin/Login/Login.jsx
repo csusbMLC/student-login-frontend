@@ -140,7 +140,7 @@ export default function Login() {
       {loginStatus && (
         <Notification
           color={
-            loginStatus.includes("Error") || loginStatus.includes("Failed")
+            loginStatus.includes("Error") || loginStatus.includes("failed")
               ? "red"
               : loginStatus.includes("successful")
               ? "green"
