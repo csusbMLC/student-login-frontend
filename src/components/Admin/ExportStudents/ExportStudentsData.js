@@ -57,7 +57,11 @@ export const masterClassArr = (students, sort = "asc") => {
  * @param {string} [sort="desc"] - The sort order. Defaults to "desc" (descending order).
  * @returns {Student[]} - The filtered and sorted array of students.
  */
-export const studentsWithClassArr = (students, className, sort = "desc") => {
+export const studentsWithClassArr = (
+  students = [],
+  className = "",
+  sort = "desc"
+) => {
   const filteredStudents = students.filter((student) =>
     student.classes.includes(className)
   );
@@ -70,52 +74,63 @@ export const studentsWithClassArr = (students, className, sort = "desc") => {
 };
 
 /**
- * Calculates the total number of seconds a student has spent in a specific class.
- *
- * @param {Student} student - The student object containing login timestamps.
- * @param {string} className - The name of the class to calculate total seconds for.
- * @returns {number} - The total number of seconds the student has spent in the specified class.
- */
-export const findTotalSecondsByClass = (student, className) => {
-  let totalSeconds = 0;
-  // console.log(student, "student in findTotalSecondsByClass");
-  if (student.loginTimestamps.length) {
-    student.loginTimestamps.forEach((timestamp) => {
-      if (timestamp.className === className) {
-        totalSeconds += timestamp.totalTime;
-      }
-    });
-  }
-  return totalSeconds;
-};
-
-/**
  * Returns an array of timestamps for a specific class from a student's login timestamps.
  *
  * @param {Student} student - The student object containing login timestamps.
  * @param {string} className - The name of the class to filter timestamps for.
  * @returns {LoginTimestamp[]} - An array of timestamps for the specified class.
  */
-export const timeStampsByClass = (student, className) => {
-  return student.loginTimestamps.filter(
-    (timestamp) => timestamp.className === className
-  );
+export const filterTimeStamps = (student = {}, className = "") => {
+  if (!student.loginTimestamps) return [];
+  if (className) {
+    return student.loginTimestamps.filter(
+      (timestamp) => timestamp.className === className
+    );
+  } else {
+    return student.loginTimestamps;
+  }
 };
 
 /**
- * Transforms an array of student objects into a format for CSV creation.
- * @param {Student[]} students - The array of student objects.
- * @param {string} className - The name of the class.
- * @returns {Array} - The transformed array of student objects.
+ * Calculates the total number of seconds a student has spent in a specific class.
+ *
+ * @param {Student} student - The student object containing login timestamps.
+ * @param {string} className - The name of the class to calculate total seconds for.
+ * @returns {number} - The total number of seconds the student has spent in the specified class.
  */
-export const exportStudentsArr = (students, className) => {
+export const findTotalSecondsByClass = (student, className = "") => {
+  let totalSeconds = 0;
+  let timestamps = className
+    ? filterTimeStamps(student, className)
+    : student.loginTimestamps;
+  if (timestamps.length) {
+    timestamps.forEach((timestamp) => {
+      totalSeconds += timestamp.totalTime;
+    });
+  }
+  return totalSeconds;
+};
+
+/**
+ * Transforms student data based on export type and filter value.
+ *
+ * @param {Array} students - The array of student objects.
+ * @param {string} exportType - The export type ("class" or "all").
+ * @param {string} filterValue - The filter value for class export.
+ * @returns {Array} - The transformed student data.
+ */
+export const transformStudents = (students, exportType, filterValue) => {
   return students.map((student) => {
     const id = student.studentId;
-    const lastName = student.studentName.split(" ")[0];
-    const firstName = student.studentName.split(" ").slice(1).join(" ");
-    const filteredTimestamps = timeStampsByClass(student, className);
-    const totalSeconds = secondsToHoursMinutesSeconds(
-      findTotalSecondsByClass(student, className)
+    const firstName = student.studentName.split(" ")[0];
+    const lastName = student.studentName.split(" ").slice(1).join(" ");
+    const filteredTimestamps =
+      exportType === "class"
+        ? filterTimeStamps(student, filterValue)
+        : student.loginTimestamps;
+    const totalSeconds = findTotalSecondsByClass(
+      student,
+      exportType === "class" ? filterValue : ""
     );
 
     const transformedTimestamps = filteredTimestamps.map((timestamp) => {
@@ -145,6 +160,7 @@ export const exportStudentsArr = (students, className) => {
       const timeElapsed = secondsToHoursMinutesSeconds(timestamp.totalTime);
 
       return {
+        className: timestamp.className,
         date: timeStampDate,
         login: formattedLoginDate,
         logout: formattedLogoutDate,
@@ -156,7 +172,7 @@ export const exportStudentsArr = (students, className) => {
       id,
       lastName,
       firstName,
-      className,
+      filterValue,
       totalSeconds,
       timestamps: transformedTimestamps,
     };
@@ -174,15 +190,16 @@ export const exportStudentsArr = (students, className) => {
  */
 export const createCSV = (csvData) => {
   let csv =
-    "ID, Last Name, First Name, Date, Time In, Time Out, Elapsed Time, Class\n";
+    "ID, Last Name, First Name, Date, Time In, Time Out, Elapsed Time, Class, Total Time\n";
   csvData.forEach((student) => {
-    const { id, lastName, firstName, className, totalSeconds } = student;
-    csv += `${id},${lastName},${firstName},,,,,${className}\n`;
+    const { id, lastName, firstName, totalSeconds } = student;
+    const formattedTotalTime = secondsToHoursMinutesSeconds(totalSeconds);
+    csv += `${id},${lastName},${firstName},,,,,,\n`;
     student.timestamps.forEach((timestamp) => {
-      const { date, login, logout, timeClocked } = timestamp;
+      const { date, login, logout, timeClocked, className } = timestamp;
       csv += `,,,${date},${login},${logout},${timeClocked},${className}\n`;
     });
-    csv += `Total Time: ${totalSeconds}\n`;
+    csv += `,,,,,,,,${formattedTotalTime}\n`;
   });
   return csv;
 };

@@ -17,3 +17,28 @@ export const classTotalTime = (studentTimestamps, className) => {
   }, 0);
   return totalTime;
 };
+
+/**
+ * Filters an array of students based on the specified filter criteria.
+ *
+ * @param {Array} students - The array of students to filter.
+ * @param {string} filterBy - The property to filter by. Valid options are "class" or "student".
+ * @param {string} filterValue - The value to filter by.
+ * @returns {Array} - The filtered array of students.
+ */
+export const filterStudents = (students, filterBy, filterValue) => {
+  if (!filterBy || !filterValue) return students;
+
+  const filterByOptions = {
+    class: "classes",
+    student: "studentId",
+  };
+
+  if (Object.hasOwnProperty.call(filterByOptions, filterBy)) {
+    return students.filter((student) =>
+      student[filterByOptions[filterBy]].includes(filterValue)
+    );
+  } else {
+    return students;
+  }
+};
