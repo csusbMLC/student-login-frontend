@@ -9,7 +9,7 @@
  */
 import { Group, UnstyledButton, Title, Button, Menu } from "@mantine/core";
 
-function Header({ user, handleLogout }) {
+function Header({ user, handleLogout, handleDisplay }) {
   return (
     <Group justify="space-between" mb={"xl"}>
       <Menu>
@@ -18,7 +18,9 @@ function Header({ user, handleLogout }) {
         </Menu.Target>
         <Menu.Dropdown>
           <Menu.Item>
-            <Button>Profile Settings</Button>
+            <Button onClick={() => handleDisplay("showChangePassword")}>
+              Profile Settings
+            </Button>
           </Menu.Item>
         </Menu.Dropdown>
       </Menu>

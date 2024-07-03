@@ -20,6 +20,7 @@ export function useDisplayState(
     showEditStudentForm: false,
     showTimeLogForm: false,
     showImportStudentsForm: false,
+    showChangePassword: false,
   }
 ) {
   const [displayState, setDisplayState] = useState(initialState);
@@ -37,6 +38,7 @@ export function useDisplayState(
       showEditStudentForm: false,
       showTimeLogForm: false,
       showImportStudentsForm: false,
+      showChangePassword: false,
     };
     if (Object.keys(newState).includes(showState)) {
       newState[showState] = true;
