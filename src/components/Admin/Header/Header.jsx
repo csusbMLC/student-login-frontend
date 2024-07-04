@@ -7,25 +7,26 @@
  * @param {Function} props.handleLogout - The function to handle user logout.
  * @returns {JSX.Element} The rendered header component.
  */
-import { Group, UnstyledButton, Title, Button, Menu } from "@mantine/core";
+import { Group, UnstyledButton, Title, Button } from "@mantine/core";
+import { IconSettings } from "@tabler/icons-react";
 
 function Header({ user, handleLogout, handleDisplay }) {
   return (
     <Group justify="space-between" mb={"xl"}>
-      <Menu>
-        <Menu.Target>
-          <UnstyledButton>{user}</UnstyledButton>
-        </Menu.Target>
-        <Menu.Dropdown>
-          <Menu.Item>
-            <Button onClick={() => handleDisplay("showChangePassword")}>
-              Profile Settings
-            </Button>
-          </Menu.Item>
-        </Menu.Dropdown>
-      </Menu>
+      <UnstyledButton className="btn-std">{user}</UnstyledButton>
       <Title order={1}>MLC Admin Home</Title>
-      <Button onClick={handleLogout}>{"Logout"}</Button>
+      <Group>
+        <Button className="btn-std" onClick={handleLogout}>
+          {"Logout"}
+        </Button>
+        <Button
+          variant="filled"
+          color="gray"
+          onClick={() => handleDisplay("showChangePassword")}
+        >
+          <IconSettings />
+        </Button>
+      </Group>
     </Group>
   );
 }

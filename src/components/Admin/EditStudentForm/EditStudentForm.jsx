@@ -217,6 +217,7 @@ function EditStudentForm({ student, onSave, onCancel }) {
             variant="filled"
             autoContrast
             onClick={handleAddClass}
+            className="btn-std"
           >
             Add Class
           </Button>
@@ -227,6 +228,7 @@ function EditStudentForm({ student, onSave, onCancel }) {
               variant="filled"
               autoContrast
               mr={"sm"}
+              className="btn-std"
             >
               Save
             </Button>
@@ -236,6 +238,7 @@ function EditStudentForm({ student, onSave, onCancel }) {
               variant="default"
               autoContrast
               onClick={onCancel}
+              className="btn-std"
             >
               Cancel
             </Button>

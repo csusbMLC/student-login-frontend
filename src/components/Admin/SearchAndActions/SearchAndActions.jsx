@@ -27,26 +27,35 @@ const SearchAndActions = ({ searchVal, setSearchVal, handleDisplay, data }) => {
         value={searchVal}
         onChange={(e) => setSearchVal(e.target.value)}
       />
-      <Button
-        onClick={() => handleDisplay("showAddStudentForm")}
-        color="green"
-        variant="filled"
-      >
-        Add Student
-      </Button>
-      <Button
-        onClick={() => handleDisplay("showImportStudentsForm")}
-        color="green"
-        variant="filled"
-      >
-        Import Students
-      </Button>
-      <Modal opened={opened} onClose={close} title="Export to Spreadsheet">
-        <ExportStudents students={data} />
-      </Modal>
-      <Button onClick={open} color="green" variant="filled">
-        Export Time
-      </Button>
+      <Group>
+        <Button
+          className="btn-std"
+          onClick={() => handleDisplay("showAddStudentForm")}
+          color="green"
+          variant="filled"
+        >
+          Add
+        </Button>
+        <Button
+          className="btn-std"
+          onClick={() => handleDisplay("showImportStudentsForm")}
+          color="green"
+          variant="filled"
+        >
+          Import
+        </Button>
+        <Modal opened={opened} onClose={close} title="Export to Spreadsheet">
+          <ExportStudents students={data} />
+        </Modal>
+        <Button
+          className="btn-std"
+          onClick={open}
+          color="green"
+          variant="filled"
+        >
+          Export
+        </Button>
+      </Group>
     </Group>
   );
 };

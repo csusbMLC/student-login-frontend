@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { TextInput, PasswordInput, Button, Group, Box } from "@mantine/core";
+import { useState } from "react";
+import { PasswordInput, Button, Group, Box } from "@mantine/core";
 import axios from "axios";
 
 function ChangePassword({ onCancel }) {
@@ -39,7 +39,7 @@ function ChangePassword({ onCancel }) {
   };
 
   return (
-    <Box sx={{ maxWidth: 300 }} mx="auto">
+    <Box style={{ maxWidth: "300px" }} mx="auto">
       <form onSubmit={handleChangePassword}>
         <PasswordInput
           label="Current Password"
@@ -66,9 +66,16 @@ function ChangePassword({ onCancel }) {
         {success && (
           <div style={{ color: "green", marginTop: 10 }}>{success}</div>
         )}
-        <Group position="right" mt="md">
-          <Button type="submit">Change Password</Button>
-          <Button variant="light" type="button" onClick={() => onCancel()}>
+        <Group justify={"start"} mt={"md"}>
+          <Button type="submit" className="btn-std">
+            Update
+          </Button>
+          <Button
+            variant="light"
+            type="button"
+            onClick={() => onCancel()}
+            className="btn-std"
+          >
             Cancel
           </Button>
         </Group>

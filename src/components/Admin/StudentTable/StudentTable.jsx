@@ -14,8 +14,9 @@
  * @param {Function} handleDelete - A function to handle delete action for a student.
  * @returns {JSX.Element} The rendered StudentTable component.
  */
-import { Table, Button, Group, Text } from "@mantine/core";
+import { Table, Button, Group, Text, List } from "@mantine/core";
 import { modals } from "@mantine/modals";
+import { secondsToHoursMinutesSeconds } from "@src/utilities/time";
 
 export default function StudentTable({
   studentData,
@@ -33,8 +34,18 @@ export default function StudentTable({
         </Text>
       ),
       labels: { cancel: "Cancel", confirm: "Delete" },
-      confirmProps: { color: "red", variant: "filled", autoContrast: true },
-      cancelProps: { color: "black", variant: "default", autoContrast: true },
+      confirmProps: {
+        color: "red",
+        variant: "filled",
+        autoContrast: true,
+        className: "btn-std",
+      },
+      cancelProps: {
+        color: "black",
+        variant: "default",
+        autoContrast: true,
+        className: "btn-std",
+      },
       onCancel: () => console.log("canceled"),
       onConfirm: () => handleDelete(studentId),
     });
@@ -53,46 +64,60 @@ export default function StudentTable({
     });
     const formattedTimePerClass = Array.from(timePerClassMap).map(
       ([className, totalTime]) => {
-        return `${className}: ${(totalTime / 3600).toFixed(2)}`;
+        return `${className}: ${secondsToHoursMinutesSeconds(totalTime)}`;
       }
     );
+
     return (
       <Table.Tr key={studentId} id={studentId}>
         <Table.Td>{studentName}</Table.Td>
         <Table.Td>{studentId}</Table.Td>
-        <Table.Td>{classes.join(", ")}</Table.Td>
+        <Table.Td>
+          {
+            <List size="sm" spacing={"sm"} listStyleType={"none"}>
+              {classes.map((className, index) => (
+                <List.Item key={index}>{className}</List.Item>
+              ))}
+            </List>
+          }
+        </Table.Td>
         {/*<td>{((loginTimestamps.reduce((acc, curr) => curr.totalTime + acc, 0) / 3600)).toFixed(2)}</td>*/}
         <Table.Td>
-          {formattedTimePerClass.length
-            ? formattedTimePerClass.join(", ")
-            : "No Time Logged"}
+          {formattedTimePerClass.length ? (
+            <List size="sm" spacing={"sm"} listStyleType={"none"}>
+              {formattedTimePerClass.map((formattedString, index) => (
+                <List.Item key={index}>{formattedString}</List.Item>
+              ))}
+            </List>
+          ) : (
+            "No Time Logged"
+          )}
         </Table.Td>
         <Table.Td>
-          <Group>
+          <Group justify="center" wrap={"nowrap"} className="mobile-flex-wrap">
             <Button
               onClick={() => handleTimeLog(studentId)}
-              className="btn-view-log"
+              className="btn-view-log btn-std"
               color="blue"
               variant="filled"
               autoContrast
             >
-              Time Log
+              View
             </Button>
             <Button
               onClick={() => handleEdit(studentId)}
-              className="btn-edit"
+              className="btn-edit btn-std"
               color="yellow"
               variant="filled"
               autoContrast
             >
-              Edit Student
+              Edit
             </Button>
             <Button
               onClick={() => {
-                console.log(studentId);
                 openDeleteModal(studentId);
               }}
-              className="btn-delete"
+              className="btn-delete btn-std"
               color="red"
               variant="filled"
               autoContrast
@@ -112,7 +137,7 @@ export default function StudentTable({
           <Table.Th>Name</Table.Th>
           <Table.Th>Student ID</Table.Th>
           <Table.Th>Classes</Table.Th>
-          <Table.Th>Total Time Logged (hours)</Table.Th>
+          <Table.Th>Total Time</Table.Th>
           <Table.Th>Actions</Table.Th>
         </Table.Tr>
       </Table.Thead>
