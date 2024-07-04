@@ -11,7 +11,7 @@
  * @param {number} studentData[].loginTimestamps[].totalTime - The total time logged for the class in seconds.
  * @param {Function} handleTimeLog - A function to handle time log action for a student.
  * @param {Function} handleEdit - A function to handle edit action for a student.
- * @param {Function} handleDeleteStudent - A function to handle delete action for a student.
+ * @param {Function} handleDelete - A function to handle delete action for a student.
  * @returns {JSX.Element} The rendered StudentTable component.
  */
 import { Table, Button, Group, Text } from "@mantine/core";
@@ -21,7 +21,7 @@ export default function StudentTable({
   studentData,
   handleTimeLog,
   handleEdit,
-  handleDeleteStudent,
+  handleDelete,
 }) {
   const openDeleteModal = (studentId) =>
     modals.openConfirmModal({
@@ -36,7 +36,7 @@ export default function StudentTable({
       confirmProps: { color: "red", variant: "filled", autoContrast: true },
       cancelProps: { color: "black", variant: "default", autoContrast: true },
       onCancel: () => console.log("canceled"),
-      onConfirm: () => handleDeleteStudent(studentId),
+      onConfirm: () => handleDelete(studentId),
     });
   const rows = studentData.map((item) => {
     const { studentName, studentId, classes, loginTimestamps } = item;
@@ -87,7 +87,6 @@ export default function StudentTable({
             >
               Edit Student
             </Button>
-            {/* <Button onClick={() => handleDelete(index)}>Delete</Button> */}
             <Button
               onClick={() => {
                 console.log(studentId);
