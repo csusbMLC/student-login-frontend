@@ -108,7 +108,9 @@ function Dashboard() {
         {showImportStudentsForm && (
           <ImportStudents students={data} onCancel={handleDisplay} />
         )}
-        {showChangePassword && <ChangePassword onCancel={handleDisplay} />}
+        {showChangePassword && (
+          <ChangePassword onCancel={handleDisplay} user={user} />
+        )}
       </Box>
     </Container>
   );

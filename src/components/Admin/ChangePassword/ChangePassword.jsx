@@ -1,13 +1,20 @@
 import { useState } from "react";
-import { PasswordInput, Button, Group, Box } from "@mantine/core";
+import { PasswordInput, Button, Group, Box, Notification } from "@mantine/core";
 import axios from "axios";
+import { URL } from "@src/constants";
 
-function ChangePassword({ onCancel }) {
+function ChangePassword({ onCancel, user }) {
   const [currentPassword, setCurrentPassword] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+
+  const resetForm = () => {
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+  };
 
   const handleChangePassword = async (e) => {
     e.preventDefault();
@@ -20,8 +27,9 @@ function ChangePassword({ onCancel }) {
 
     try {
       // Replace with your backend endpoint
-      const response = await axios.post("/api/change-password", {
-        currentPassword,
+      const response = await axios.post(`${URL}/auth/changePassword`, {
+        username: user,
+        password: currentPassword,
         newPassword,
       });
 
@@ -36,6 +44,7 @@ function ChangePassword({ onCancel }) {
       setError("Error changing password");
       setSuccess("");
     }
+    resetForm();
   };
 
   return (
@@ -62,11 +71,7 @@ function ChangePassword({ onCancel }) {
           onChange={(event) => setConfirmPassword(event.currentTarget.value)}
           required
         />
-        {error && <div style={{ color: "red", marginTop: 10 }}>{error}</div>}
-        {success && (
-          <div style={{ color: "green", marginTop: 10 }}>{success}</div>
-        )}
-        <Group justify={"start"} mt={"md"}>
+        <Group justify={"end"} mt={"md"}>
           <Button type="submit" className="btn-std">
             Update
           </Button>
@@ -80,6 +85,16 @@ function ChangePassword({ onCancel }) {
           </Button>
         </Group>
       </form>
+      {success && (
+        <Notification mt={"md"} color={"green"} onClose={() => setSuccess("")}>
+          {success}
+        </Notification>
+      )}
+      {error && (
+        <Notification mt={"md"} color={"red"} onClose={() => setError("")}>
+          {error}
+        </Notification>
+      )}
     </Box>
   );
 }

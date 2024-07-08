@@ -41,8 +41,8 @@ export default function StudentTable({
         className: "btn-std",
       },
       cancelProps: {
-        color: "black",
-        variant: "default",
+        color: "red",
+        variant: "light",
         autoContrast: true,
         className: "btn-std",
       },
@@ -102,7 +102,7 @@ export default function StudentTable({
               variant="filled"
               autoContrast
             >
-              View
+              Time
             </Button>
             <Button
               onClick={() => handleEdit(studentId)}
@@ -111,7 +111,7 @@ export default function StudentTable({
               variant="filled"
               autoContrast
             >
-              Edit
+              Classes
             </Button>
             <Button
               onClick={() => {

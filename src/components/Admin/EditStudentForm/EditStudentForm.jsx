@@ -196,7 +196,7 @@ function EditStudentForm({ student, onSave, onCancel }) {
   });
 
   return (
-    <Paper padding="md">
+    <Paper padding="md" style={{ maxWidth: "500px" }} mx="auto">
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack spacing="md">
           <TextInput label="Name" {...form.getInputProps("name")} />
@@ -234,8 +234,7 @@ function EditStudentForm({ student, onSave, onCancel }) {
             </Button>
             <Button
               type="button"
-              color="black"
-              variant="default"
+              variant="light"
               autoContrast
               onClick={onCancel}
               className="btn-std"

@@ -150,6 +150,7 @@ function TimeLogForm({ student, onSave, onCancel }) {
                   secondsToHoursMinutesSeconds(value)
                 )
               }
+              style={{ width: "80px" }}
             />
             <Button
               type="button"
@@ -217,8 +218,7 @@ function TimeLogForm({ student, onSave, onCancel }) {
               <Button
                 type="button"
                 onClick={onCancel}
-                color="black"
-                variant="default"
+                variant="light"
                 autoContrast
                 className="btn-std"
               >
