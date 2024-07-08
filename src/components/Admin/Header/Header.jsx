@@ -8,13 +8,25 @@
  * @returns {JSX.Element} The rendered header component.
  */
 import { Group, UnstyledButton, Title, Button } from "@mantine/core";
+import { IconSettings } from "@tabler/icons-react";
 
-function Header({ user, handleLogout }) {
+function Header({ user, handleLogout, handleDisplay }) {
   return (
     <Group justify="space-between" mb={"xl"}>
-      <UnstyledButton>{user}</UnstyledButton>
+      <UnstyledButton className="btn-std">{user}</UnstyledButton>
       <Title order={1}>MLC Admin Home</Title>
-      <Button onClick={handleLogout}>{"Logout"}</Button>
+      <Group>
+        <Button className="btn-std" onClick={handleLogout}>
+          {"Logout"}
+        </Button>
+        <Button
+          variant="filled"
+          color="gray"
+          onClick={() => handleDisplay("showChangePassword")}
+        >
+          <IconSettings />
+        </Button>
+      </Group>
     </Group>
   );
 }

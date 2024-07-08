@@ -15,6 +15,7 @@ import { useDisplayState } from "@src/hooks/useDisplayState";
 import { useStudentData } from "@src/hooks/useStudentData";
 import { useAuth } from "@src/hooks/useAuth";
 import SearchAndActions from "@components/Admin/SearchAndActions/SearchAndActions";
+import ChangePassword from "@components/Admin/ChangePassword/ChangePassword";
 
 /**
  * Renders the dashboard component which is the root component for the admin section.
@@ -37,6 +38,7 @@ function Dashboard() {
       showEditStudentForm,
       showImportStudentsForm,
       showTimeLogForm,
+      showChangePassword,
     },
     handleDisplay,
   ] = useDisplayState();
@@ -58,7 +60,11 @@ function Dashboard() {
   return (
     <Container size="xl">
       <Box sx={{ padding: "20px" }}>
-        <Header user={user} handleLogout={handleLogout} />
+        <Header
+          user={user}
+          handleLogout={handleLogout}
+          handleDisplay={handleDisplay}
+        />
         {showDashboard && (
           <Box>
             <SearchAndActions
@@ -101,6 +107,9 @@ function Dashboard() {
         )}
         {showImportStudentsForm && (
           <ImportStudents students={data} onCancel={handleDisplay} />
+        )}
+        {showChangePassword && (
+          <ChangePassword onCancel={handleDisplay} user={user} />
         )}
       </Box>
     </Container>

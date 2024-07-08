@@ -78,7 +78,6 @@ function TimeLogForm({ student, onSave, onCancel }) {
         calc = 0;
         break;
     }
-    console.log(Math.round(calc / 1000));
     const totalSeconds = Math.round(calc / 1000);
     form.setFieldValue(`timeStamps.${index}.totalTime`, totalSeconds);
     // form.setFieldValue(`timeStamps.${index}.totalTime`, calc);
@@ -151,6 +150,7 @@ function TimeLogForm({ student, onSave, onCancel }) {
                   secondsToHoursMinutesSeconds(value)
                 )
               }
+              style={{ width: "80px" }}
             />
             <Button
               type="button"
@@ -169,8 +169,6 @@ function TimeLogForm({ student, onSave, onCancel }) {
   });
 
   const handleSubmit = () => {
-    console.log(student.loginTimestamps);
-    console.log(form.values.timeStamps);
     // const updatedStudent = { ...student, loginTimestamps: form.values.timeStamps };
     const updatedTimeStamps = form.values.timeStamps.map((timeLog) => {
       const { className, loginTime, logoutTime, totalTime } = timeLog;
@@ -202,8 +200,9 @@ function TimeLogForm({ student, onSave, onCancel }) {
               color="green"
               variant="filled"
               autoContrast
+              className="btn-std"
             >
-              Add Time Log
+              Add Time
             </Button>
             <Box>
               <Button
@@ -212,15 +211,16 @@ function TimeLogForm({ student, onSave, onCancel }) {
                 variant="filled"
                 autoContrast
                 mr={"sm"}
+                className="btn-std"
               >
                 Save
               </Button>
               <Button
                 type="button"
                 onClick={onCancel}
-                color="black"
-                variant="default"
+                variant="light"
                 autoContrast
+                className="btn-std"
               >
                 Cancel
               </Button>

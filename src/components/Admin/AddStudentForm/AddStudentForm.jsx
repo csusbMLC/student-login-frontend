@@ -148,7 +148,7 @@ const AddStudentForm = ({ onSubmit, onCancel }) => {
   });
 
   return (
-    <Paper padding="md">
+    <Paper padding="md" style={{ maxWidth: "500px" }} mx="auto">
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack spacing="md">
           <TextInput
@@ -194,8 +194,7 @@ const AddStudentForm = ({ onSubmit, onCancel }) => {
             </Button>
             <Button
               type="button"
-              color="black"
-              variant="default"
+              variant="light"
               autoContrast
               onClick={onCancel}
             >
