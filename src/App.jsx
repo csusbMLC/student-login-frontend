@@ -9,6 +9,9 @@ import "@mantine/dates/styles.css";
 import { Container, Center, Paper, Title } from "@mantine/core";
 
 function App() {
+  // Check if the current URL contains "kiosk"
+  const isKiosk = window.location.pathname.includes("kiosk");
+
   return (
     <Center style={{ height: "100vh" }}>
       {" "}
@@ -16,9 +19,11 @@ function App() {
       <Container w={400} style={{ width: "100%" }} pb={"md"}>
         {" "}
         {/* Controls max width */}
-        <Title order={2} c="red" align="center">
-          WARNING: DO NOT CLOSE THIS WINDOW OR YOUR TIME {"WON'T"} BE RECORDED
-        </Title>
+        {!isKiosk && (
+          <Title order={2} c="red" align="center">
+            WARNING: DO NOT CLOSE THIS WINDOW OR YOUR TIME {"WON'T"} BE RECORDED
+          </Title>
+        )}
         <Paper p={"lg"} shadow="xs">
           {" "}
           {/* Optional: Adds styling to the form */}
