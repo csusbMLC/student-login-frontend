@@ -15,29 +15,62 @@ import {
   Stack,
 } from "@mantine/core";
 import { isEmptyObject } from "@utilities/student";
-import { getStudent, studentLogin } from "@src/services/apiServices";
+import {
+  getStudent,
+  studentLogin,
+  studentLogout,
+} from "@src/services/apiServices";
 
-export default function Login() {
+export default function Dashboard() {
   const [student, setStudent] = useState({});
-  const [selectedClass, setSelectedClass] = useState("");
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+
+  return (
+    <Container>
+      <Title order={1}>MLC iPad Login</Title>
+      {isEmptyObject(student) ? (
+        <Login setStudent={setStudent} />
+      ) : (
+        <ClassSelect student={student} setStudent={setStudent} />
+      )}
+      <Notification mt={10} title="Instructions">
+        <Text>
+          Please enter your student ID to login. If you are already logged in,
+          select your class to logout.
+        </Text>
+      </Notification>
+    </Container>
+  );
+}
+
+function Login({ setStudent }) {
   const [inputVal, setInputVal] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("username", e.target.username.value);
-      const { success, student } = await getStudent(e.target.username.value);
+      console.log("username", inputVal);
+      const { success, student } = await getStudent(inputVal);
       if (success) {
         console.log("student", student);
-        setStudent(student);
-        setSelectedClass(student.lastClass);
-        const { lastLogin, lastLogout } = student;
+        const { lastLogin, lastLogout, studentId } = student;
         if (!lastLogin || !lastLogout) {
           console.log("missing login or logout");
         } else if (lastLogin === lastLogout) {
           console.log("logout student");
+          const res = await studentLogout(studentId);
+          if (res.success) {
+            console.log("logged out student");
+            window.alert("You have been logged out.");
+            setInputVal("");
+          } else {
+            console.error("Failed to logout student");
+            window.alert("Failed to logout. Please try again.");
+          }
         } else {
           console.log("login student");
+          setStudent(student);
         }
       } else {
         console.error("Failed to get student");
@@ -48,8 +81,7 @@ export default function Login() {
   };
 
   return (
-    <Container>
-      <Title>MLC iPad Login</Title>
+    <>
       <form onSubmit={handleSubmit}>
         <TextInput
           mt={"lg"}
@@ -63,9 +95,50 @@ export default function Login() {
           pattern="[0-9]{9}"
         />
         <Button type="submit" mt={"lg"} fullWidth>
-          Login
+          Login/Logout
         </Button>
       </form>
-    </Container>
+    </>
+  );
+}
+
+function ClassSelect({ student, setStudent }) {
+  const { studentId, studentName, classes, lastClass } = student;
+
+  const [selectedClass, setSelectedClass] = useState(lastClass);
+
+  const handleLogin = async () => {
+    try {
+      const { success, error } = await studentLogin(studentId, selectedClass);
+      if (success) {
+        console.log("Logged in successfully");
+        window.alert("You have been logged in.");
+        setStudent({});
+      } else {
+        console.error("Error logging in:", error.message);
+        window.alert("Error logging in. Please try again.");
+      }
+    } catch (error) {
+      console.error("Error logging in:", error.message);
+      window.alert("Error logging in. Please try again.");
+    }
+  };
+
+  return (
+    <>
+      <Title order={2}>Welcome {studentName}</Title>
+      <Text>Please select a class to login</Text>
+      <Select
+        mt={10}
+        label="Classes"
+        placeholder="Select your class"
+        data={classes}
+        value={selectedClass}
+        onChange={(value) => setSelectedClass(value)}
+      />
+      <Button mt={10} fullWidth onClick={handleLogin}>
+        Login
+      </Button>
+    </>
   );
 }
