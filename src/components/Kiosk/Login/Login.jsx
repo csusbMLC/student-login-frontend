@@ -2,18 +2,14 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   TextInput,
-  PasswordInput,
-  Anchor,
-  Paper,
   Title,
   Text,
   Container,
   Button,
   Notification,
   Select,
-  Group,
-  Stack,
 } from "@mantine/core";
+import { modals } from "@mantine/modals";
 import { isEmptyObject } from "@utilities/student";
 import {
   getStudent,
@@ -52,6 +48,46 @@ export default function Dashboard() {
 function Login({ setStudent }) {
   const [inputVal, setInputVal] = useState("");
 
+  const handleLogout = async (studentId) => {
+    console.log("logout student");
+    const res = await studentLogout(studentId);
+    if (res.success) {
+      console.log("logged out student");
+      window.alert("You have been logged out.");
+      setInputVal("");
+    } else {
+      console.error("Failed to logout student");
+      window.alert("Failed to logout. Please try again.");
+    }
+  };
+
+  const openLogoutModal = (studentId) =>
+    modals.openConfirmModal({
+      title: "Confirm Logout",
+      centered: true,
+      children: (
+        <Text size="sm">
+          You will be logged out. If you are not logged in, please contact lab
+          for assistance.
+        </Text>
+      ),
+      labels: { cancel: "Cancel", confirm: "Logout" },
+      confirmProps: {
+        color: "blue",
+        variant: "filled",
+        autoContrast: true,
+        className: "btn-std",
+      },
+      cancelProps: {
+        color: "blue",
+        variant: "light",
+        autoContrast: true,
+        className: "btn-std",
+      },
+      onCancel: () => console.log("canceled"),
+      onConfirm: () => handleLogout(studentId),
+    });
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -64,8 +100,7 @@ function Login({ setStudent }) {
           console.log("login student");
           setStudent(student);
         } else if (lastLogin === lastLogout) {
-          console.log("logout student");
-          const res = await studentLogout(studentId);
+          openLogoutModal(studentId);
           if (res.success) {
             console.log("logged out student");
             window.alert("You have been logged out.");
