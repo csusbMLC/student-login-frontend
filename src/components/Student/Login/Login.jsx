@@ -44,7 +44,7 @@ const Login = () => {
 
   return (
     <Box sx={{ maxWidth: 300 }} mx="auto">
-      <Title order={1}>Student Login</Title>
+      <Title order={1}>MLC Login</Title>
       <TextInput
         label={studentId ? "Student ID" : ""}
         placeholder="Student ID"

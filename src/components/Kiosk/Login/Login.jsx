@@ -28,7 +28,7 @@ export default function Dashboard() {
 
   return (
     <Container>
-      <Title order={1}>MLC iPad Login</Title>
+      <Title order={1}>MLC Login</Title>
       {isEmptyObject(student) ? (
         <Login setStudent={setStudent} />
       ) : (
