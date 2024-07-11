@@ -101,14 +101,6 @@ function Login({ setStudent }) {
           setStudent(student);
         } else if (lastLogin === lastLogout) {
           openLogoutModal(studentId);
-          if (res.success) {
-            console.log("logged out student");
-            window.alert("You have been logged out.");
-            setInputVal("");
-          } else {
-            console.error("Failed to logout student");
-            window.alert("Failed to logout. Please try again.");
-          }
         } else {
           console.error("Invalid student state");
           window.alert("Invalid student state. Please contact lab assistance.");
