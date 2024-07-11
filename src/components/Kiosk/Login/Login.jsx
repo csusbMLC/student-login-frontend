@@ -31,31 +31,43 @@ export default function Dashboard() {
     <Container>
       <Title order={1}>MLC Login</Title>
       {isEmptyObject(student) ? (
-        <Login setStudent={setStudent} />
+        <Login
+          setStudent={setStudent}
+          setError={setError}
+          setSuccess={setSuccess}
+        />
       ) : (
         <ClassSelect student={student} setStudent={setStudent} />
       )}
-      <Notification mt={10} title="Instructions">
-        <Text>
-          Please enter your student ID to login. If you are already logged in,
-          select your class to logout.
-        </Text>
-      </Notification>
+      {success && isEmptyObject(student) && (
+        <Notification mt={10} title="Success" color="green">
+          <Text>{success}</Text>
+        </Notification>
+      )}
+      {error && isEmptyObject(student) && (
+        <Notification mt={10} color="red" title="Error">
+          <Text>{error}</Text>
+        </Notification>
+      )}
     </Container>
   );
 }
 
-function Login({ setStudent }) {
+function Login({ setStudent, setError, setSuccess }) {
   const [inputVal, setInputVal] = useState("");
 
   const handleLogout = async (studentId) => {
     console.log("logout student");
     const res = await studentLogout(studentId);
     if (res.success) {
+      setError("");
+      setSuccess("You have been logged out.");
       console.log("logged out student");
       window.alert("You have been logged out.");
       setInputVal("");
     } else {
+      setSuccess("");
+      setError("Failed to logout student");
       console.error("Failed to logout student");
       window.alert("Failed to logout. Please try again.");
     }
@@ -90,6 +102,8 @@ function Login({ setStudent }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSuccess("Loading student...");
+    setError("");
     try {
       console.log("username", inputVal);
       const { success, student } = await getStudent(inputVal);
@@ -98,17 +112,25 @@ function Login({ setStudent }) {
         const { lastLogin, lastLogout, studentId } = student;
         if (isNewStudent(student) || lastLogin !== lastLogout) {
           console.log("login student");
+          setError("");
+          setSuccess("Student found. Loading classes.");
           setStudent(student);
         } else if (lastLogin === lastLogout) {
           openLogoutModal(studentId);
         } else {
+          setSuccess("");
+          setError("Invalid student, please contact lab assistance.");
           console.error("Invalid student state");
           window.alert("Invalid student state. Please contact lab assistance.");
         }
       } else {
+        setSuccess("");
+        setError("Failed to get student");
         console.error("Failed to get student");
       }
     } catch (error) {
+      setSuccess("");
+      setError("Error getting student");
       console.error("Error getting student:", error);
     }
   };
