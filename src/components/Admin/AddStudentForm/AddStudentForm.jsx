@@ -62,6 +62,9 @@ const AddStudentForm = ({ onSubmit, onCancel }) => {
           studentName: form.values.name,
           studentId: form.values.studentId,
           classes: transformedClasses,
+          lastLogout: 0,
+          lastLogin: 0,
+          lastClass: "",
         };
         onSubmit(newStudent, onCancel);
       } else {

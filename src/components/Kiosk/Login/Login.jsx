@@ -21,6 +21,11 @@ import {
   studentLogout,
 } from "@src/services/apiServices";
 
+const isNewStudent = (student) => {
+  const { lastLogin, lastLogout, lastClass } = student;
+  return lastLogin === 0 && lastLogout === 0 && lastClass === "";
+};
+
 export default function Dashboard() {
   const [student, setStudent] = useState({});
   const [error, setError] = useState("");
@@ -55,8 +60,9 @@ function Login({ setStudent }) {
       if (success) {
         console.log("student", student);
         const { lastLogin, lastLogout, studentId } = student;
-        if (!lastLogin || !lastLogout) {
-          console.log("missing login or logout");
+        if (isNewStudent(student) || lastLogin !== lastLogout) {
+          console.log("login student");
+          setStudent(student);
         } else if (lastLogin === lastLogout) {
           console.log("logout student");
           const res = await studentLogout(studentId);
@@ -69,8 +75,8 @@ function Login({ setStudent }) {
             window.alert("Failed to logout. Please try again.");
           }
         } else {
-          console.log("login student");
-          setStudent(student);
+          console.error("Invalid student state");
+          window.alert("Invalid student state. Please contact lab assistance.");
         }
       } else {
         console.error("Failed to get student");
@@ -127,18 +133,30 @@ function ClassSelect({ student, setStudent }) {
   return (
     <>
       <Title order={2}>Welcome {studentName}</Title>
-      <Text>Please select a class to login</Text>
-      <Select
-        mt={10}
-        label="Classes"
-        placeholder="Select your class"
-        data={classes}
-        value={selectedClass}
-        onChange={(value) => setSelectedClass(value)}
-      />
-      <Button mt={10} fullWidth onClick={handleLogin}>
-        Login
-      </Button>
+      {classes.length === 0 && (
+        <>
+          <Text mt={10}>No classes found, please contact lab assistance.</Text>
+          <Button mt={10} fullWidth onClick={() => setStudent({})}>
+            Logout
+          </Button>
+        </>
+      )}
+      {classes.length > 0 && (
+        <>
+          <Text>Please select a class to login</Text>
+          <Select
+            mt={10}
+            label="Classes"
+            placeholder="Select your class"
+            data={classes}
+            value={selectedClass}
+            onChange={(value) => setSelectedClass(value)}
+          />
+          <Button mt={10} fullWidth onClick={handleLogin}>
+            Login
+          </Button>
+        </>
+      )}
     </>
   );
 }
