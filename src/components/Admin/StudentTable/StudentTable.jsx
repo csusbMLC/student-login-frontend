@@ -14,9 +14,46 @@
  * @param {Function} handleDelete - A function to handle delete action for a student.
  * @returns {JSX.Element} The rendered StudentTable component.
  */
-import { Table, Button, Group, Text, List } from "@mantine/core";
+import { useState } from "react";
+import {
+  Table,
+  Button,
+  Group,
+  Text,
+  List,
+  UnstyledButton,
+  Center,
+  rem,
+} from "@mantine/core";
 import { modals } from "@mantine/modals";
 import { secondsToHoursMinutesSeconds } from "@src/utilities/time";
+import {
+  IconSelector,
+  IconChevronDown,
+  IconChevronUp,
+} from "@tabler/icons-react";
+
+function Th({ children, reversed = false, sorted, onSort }) {
+  const Icon = sorted
+    ? reversed
+      ? IconChevronUp
+      : IconChevronDown
+    : IconSelector;
+  return (
+    <Table.Th>
+      <UnstyledButton onClick={onSort} px={"3"} py={"2"}>
+        <Group justify="space-between">
+          <Text fw={500} fz="sm">
+            {children}
+          </Text>
+          <Center>
+            <Icon style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
+          </Center>
+        </Group>
+      </UnstyledButton>
+    </Table.Th>
+  );
+}
 
 export default function StudentTable({
   studentData,
@@ -24,6 +61,31 @@ export default function StudentTable({
   handleEdit,
   handleDelete,
 }) {
+  const [sortBy, setSortBy] = useState("");
+  const [reversed, setReversed] = useState(false);
+
+  function sortStudentsBy(sortBy = "", reversed = false) {
+    if (sortBy === "name") {
+      return reversed
+        ? studentData.sort((a, b) => b.studentName.localeCompare(a.studentName))
+        : studentData.sort((a, b) =>
+            a.studentName.localeCompare(b.studentName)
+          );
+    } else if (sortBy === "id") {
+      return !reversed
+        ? studentData.sort((a, b) => a.studentId - b.studentId)
+        : studentData.sort((a, b) => b.studentId - a.studentId);
+    }
+    return !reversed ? studentData : studentData.slice().reverse();
+  }
+
+  function setSorting(sortBy) {
+    const isReversed = sortBy === sortBy && !reversed;
+    console.log(sortBy, isReversed);
+    setSortBy(sortBy);
+    setReversed(isReversed);
+  }
+
   const openDeleteModal = (studentId) =>
     modals.openConfirmModal({
       title: "Delete Student",
@@ -49,7 +111,7 @@ export default function StudentTable({
       onCancel: () => console.log("canceled"),
       onConfirm: () => handleDelete(studentId),
     });
-  const rows = studentData.map((item) => {
+  const rows = sortStudentsBy(sortBy, reversed).map((item) => {
     const { studentName, studentId, classes, loginTimestamps } = item;
     let timePerClassMap = new Map();
     loginTimestamps.forEach((timestamp) => {
@@ -134,11 +196,29 @@ export default function StudentTable({
     <Table striped stickyHeader>
       <Table.Thead>
         <Table.Tr>
-          <Table.Th>Name</Table.Th>
-          <Table.Th>Student ID</Table.Th>
-          <Table.Th>Classes</Table.Th>
-          <Table.Th>Total Time</Table.Th>
-          <Table.Th>Actions</Table.Th>
+          <Th
+            reversed={reversed}
+            sorted={sortBy === "name"}
+            onSort={() => setSorting("name")}
+          >
+            Name
+          </Th>
+          <Th
+            sorted={sortBy === "id"}
+            onSort={() => setSorting("id")}
+            reversed={reversed}
+          >
+            Student ID
+          </Th>
+          <Table.Th fw={500} fz={"sm"}>
+            Classes
+          </Table.Th>
+          <Table.Th fw={500} fz={"sm"}>
+            Total Time
+          </Table.Th>
+          <Table.Th fw={500} fz={"sm"}>
+            Actions
+          </Table.Th>
         </Table.Tr>
       </Table.Thead>
       <Table.Tbody className="students-body">{rows}</Table.Tbody>
