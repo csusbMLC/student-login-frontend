@@ -117,6 +117,7 @@ export default function ExportStudents({ students }) {
             value={selectedClass}
             onChange={setSelectedClass}
             mb={"sm"}
+            searchable
           />
         </>
       )}
@@ -128,6 +129,7 @@ export default function ExportStudents({ students }) {
             value={selectedStudent}
             onChange={setSelectedStudent}
             mb={"sm"}
+            searchable
           />
         </>
       )}
