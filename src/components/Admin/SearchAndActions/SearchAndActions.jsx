@@ -30,6 +30,20 @@ const SearchAndActions = ({ searchVal, setSearchVal, handleDisplay, data }) => {
       <Group>
         <Button
           className="btn-std"
+          onClick={() =>
+            fetch("http://localhost:5100/api/students", {
+              method: "DELETE",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: "Bearer " + localStorage.getItem("token"),
+              },
+            }).then((res) => console.log(res.json()))
+          }
+        >
+          Reset All
+        </Button>
+        <Button
+          className="btn-std"
           onClick={() => handleDisplay("showAddStudentForm")}
           color="green"
           variant="filled"
