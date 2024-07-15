@@ -119,7 +119,10 @@ export const useStudentData = (initialData = []) => {
     return data.filter(
       (student) =>
         student.studentName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        student.studentId.toLowerCase().includes(searchTerm.toLowerCase())
+        student.studentId.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        student.classes.some((cls) =>
+          cls.toLowerCase().includes(searchTerm.toLowerCase())
+        )
     );
   };
 

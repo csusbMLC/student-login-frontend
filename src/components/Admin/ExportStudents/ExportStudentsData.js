@@ -207,7 +207,7 @@ export const createCSV = (csvData) => {
 /**
  * Creates a CSV file from the provided data.
  *
- * @param {Array} csvString - The csv string to be converted into a CSV file.
+ * @param {String} csvString - The csv string to be converted into a CSV file.
  * @returns {string} - The url of the created CSV file.
  */
 export const createCSVFile = (csvString) => {

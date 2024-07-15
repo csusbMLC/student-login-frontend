@@ -5,6 +5,7 @@ import {
   masterClassArr,
   createCSVFile,
   downloadFile,
+  createCSV,
 } from "./ExportStudentsData";
 import { filterStudents } from "@src/utilities/student";
 
@@ -30,6 +31,12 @@ export default function ExportStudents({ students }) {
     () => masterClassArr(students),
     [students]
   );
+  const delayedDownload = (csvData, filename, delay) => {
+    setTimeout(() => {
+      const csvFile = createCSVFile(csvData); // Ensure this returns a blob URL
+      downloadFile(csvFile, filename); // Download the CSV after the delay
+    }, delay);
+  };
   // takes the students enrolled in a class, and downloads a csv of their time in that class
   const exportStudents = (exportType) => {
     let filterValue =
@@ -38,36 +45,59 @@ export default function ExportStudents({ students }) {
         : EXPORT_TYPES.STUDENT
         ? selectedStudent
         : "";
-    // name assigned to output csv file
-    const filename = `${
-      EXPORT_TYPES.ALL === exportType ? "Students" : filterValue
-    } Timesheet.csv`;
+    if (EXPORT_TYPES.CLASS === exportType && filterValue === "All Classes") {
+      masterClassArr(students).forEach((className, index) => {
+        const filteredStudents = filterStudents(
+          students,
+          exportType,
+          className
+        );
+        const csvData = transformStudents(
+          filteredStudents,
+          exportType,
+          className
+        );
+        const csvString = createCSV(csvData);
 
-    // filters students based on export type and value
-    const filteredStudents = filterStudents(students, exportType, filterValue);
+        // Assuming a base delay of 1000ms (1 second) and increasing it for each file
+        delayedDownload(csvString, `${className}.csv`, 500 * index);
+      });
+    } else {
+      // name assigned to output csv file
+      const filename = `${
+        EXPORT_TYPES.ALL === exportType ? "Students" : filterValue
+      } Timesheet.csv`;
 
-    // transform students list to readable data for csv
-    const csvData = transformStudents(
-      filteredStudents,
-      exportType,
-      filterValue
-    );
+      // filters students based on export type and value
+      const filteredStudents = filterStudents(
+        students,
+        exportType,
+        filterValue
+      );
 
-    // create web worker for csv logic to keep main thread free for UI render
-    const csvWorker = new Worker(new URL("./csvWorker.js", import.meta.url), {
-      type: "module",
-    });
-    csvWorker.postMessage(csvData);
-    csvWorker.onmessage = (e) => {
-      const csvString = e.data;
-      // uses csvData to create a file object and returns the url for that object
-      const csvFileUrl = createCSVFile(csvString);
+      // transform students list to readable data for csv
+      const csvData = transformStudents(
+        filteredStudents,
+        exportType,
+        filterValue
+      );
 
-      // creates download for csv by simulating click on a element with csvUrl
-      downloadFile(csvFileUrl, filename);
+      // create web worker for csv logic to keep main thread free for UI render
+      const csvWorker = new Worker(new URL("./csvWorker.js", import.meta.url), {
+        type: "module",
+      });
+      csvWorker.postMessage(csvData);
+      csvWorker.onmessage = (e) => {
+        const csvString = e.data;
+        // uses csvData to create a file object and returns the url for that object
+        const csvFileUrl = createCSVFile(csvString);
 
-      csvWorker.terminate();
-    };
+        // creates download for csv by simulating click on a element with csvUrl
+        downloadFile(csvFileUrl, filename);
+
+        csvWorker.terminate();
+      };
+    }
   };
 
   return (
@@ -83,10 +113,11 @@ export default function ExportStudents({ students }) {
         <>
           <Text>Select class to export</Text>
           <Select
-            data={memoMasterClassArr}
+            data={["All Classes", ...memoMasterClassArr]}
             value={selectedClass}
             onChange={setSelectedClass}
             mb={"sm"}
+            searchable
           />
         </>
       )}
@@ -98,6 +129,7 @@ export default function ExportStudents({ students }) {
             value={selectedStudent}
             onChange={setSelectedStudent}
             mb={"sm"}
+            searchable
           />
         </>
       )}

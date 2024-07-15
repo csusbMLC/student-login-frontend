@@ -42,3 +42,19 @@ export const filterStudents = (students, filterBy, filterValue) => {
     return students;
   }
 };
+
+/**
+ * Returns a boolean indicating whether obj is an empty object.
+ *
+ * @param {Object} obj - The object to check.
+ * @returns {boolean} - True if obj is an empty object, false otherwise.
+ *
+ * @example
+ * isEmptyObject({}); // true
+ * isEmptyObject({ name: "John" }); // false
+ *
+ */
+export const isEmptyObject = (obj) => {
+  for (let key in obj) return false;
+  return true;
+};
