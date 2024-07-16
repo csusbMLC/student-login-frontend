@@ -79,6 +79,11 @@ function Dashboard() {
               handleEdit={handleEdit}
               handleDelete={handleDeleteStudent}
             />
+            {filterStudents(debounced).length === 0 && (
+              <Box ta={"center"} mt="xl">
+                No students found
+              </Box>
+            )}
           </Box>
         )}
         {showTimeLogForm && (
