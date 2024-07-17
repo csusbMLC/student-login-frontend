@@ -59,7 +59,7 @@ function Dashboard() {
 
   return (
     <Container size="xl">
-      <Box sx={{ padding: "20px" }}>
+      <Box>
         <Header
           user={user}
           handleLogout={handleLogout}
