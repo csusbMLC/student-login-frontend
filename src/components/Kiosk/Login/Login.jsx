@@ -36,15 +36,30 @@ export default function Dashboard() {
           setSuccess={setSuccess}
         />
       ) : (
-        <ClassSelect student={student} setStudent={setStudent} />
+        <ClassSelect
+          student={student}
+          setStudent={setStudent}
+          setSuccess={setSuccess}
+          setError={setError}
+        />
       )}
       {success && isEmptyObject(student) && (
-        <Notification mt={10} title="Success" color="green">
+        <Notification
+          mt={10}
+          title="Success"
+          color="green"
+          onClose={() => setSuccess("")}
+        >
           <Text>{success}</Text>
         </Notification>
       )}
       {error && isEmptyObject(student) && (
-        <Notification mt={10} color="red" title="Error">
+        <Notification
+          mt={10}
+          color="red"
+          title="Error"
+          onClose={() => setError("")}
+        >
           <Text>{error}</Text>
         </Notification>
       )}
@@ -109,6 +124,7 @@ function Login({ setStudent, setError, setSuccess }) {
       if (success) {
         console.log("student", student);
         const { lastLogin, lastLogout, studentId } = student;
+        console.log(isNewStudent(student), lastLogin, lastLogout);
         if (isNewStudent(student) || lastLogin !== lastLogout) {
           console.log("login student");
           setError("");
@@ -156,7 +172,7 @@ function Login({ setStudent, setError, setSuccess }) {
   );
 }
 
-function ClassSelect({ student, setStudent }) {
+function ClassSelect({ student, setStudent, setError, setSuccess }) {
   const { studentId, studentName, classes, lastClass } = student;
 
   const [selectedClass, setSelectedClass] = useState(lastClass);
@@ -168,6 +184,8 @@ function ClassSelect({ student, setStudent }) {
         console.log("Logged in successfully");
         window.alert("You have been logged in.");
         setStudent({});
+        setSuccess("");
+        setError("");
       } else {
         console.error("Error logging in:", error.message);
         window.alert("Error logging in. Please try again.");
