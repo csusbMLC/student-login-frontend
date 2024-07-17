@@ -119,7 +119,11 @@ export const findTotalSecondsByClass = (student, className = "") => {
  * @param {string} filterValue - The filter value for class export.
  * @returns {Array} - The transformed student data.
  */
-export const transformStudents = (students, exportType, filterValue) => {
+export const transformStudents = (
+  students = [],
+  exportType = "all",
+  filterValue = ""
+) => {
   return students.map((student) => {
     const id = student.studentId;
     const firstName = student.studentName.split(" ")[0];

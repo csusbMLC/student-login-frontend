@@ -1,4 +1,4 @@
-import { URL } from '@src/constants';
+import { URL } from "@src/constants";
 
 /**
  * Adds a new student to the database.
@@ -7,17 +7,19 @@ import { URL } from '@src/constants';
  * @throws {Error} - Throws an error if the API request fails or the response status is not "Success".
  */
 export const addStudent = async (newStudent) => {
-    const response = await fetch(`${URL}/api/students`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newStudent)
-    });
-    if (!response.ok) {
-        throw new Error("Failed to add student in addStudent " + response.statusText);
-    }
-    const data = await response.json();
-    console.log("addStudent data: ", data);
-    return data;
+  const response = await fetch(`${URL}/api/students`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(newStudent),
+  });
+  if (!response.ok) {
+    throw new Error(
+      "Failed to add student in addStudent " + response.statusText
+    );
+  }
+  const data = await response.json();
+  console.log("addStudent data: ", data);
+  return data;
 };
 
 /**
@@ -28,16 +30,18 @@ export const addStudent = async (newStudent) => {
  * @throws {Error} - If the update operation fails, an error is thrown with a descriptive message.
  */
 export const updateStudent = async (studentId, updatedStudent) => {
-    const response = await fetch(`${URL}/api/students/${studentId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(updatedStudent)
-    });
-    if (!response.ok) {
-        throw new Error("Failed to update student in updateStudent " + response.statusText);
-    }
-    const data = await response.json();
-    return data;
+  const response = await fetch(`${URL}/api/students/${studentId}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(updatedStudent),
+  });
+  if (!response.ok) {
+    throw new Error(
+      "Failed to update student in updateStudent " + response.statusText
+    );
+  }
+  const data = await response.json();
+  return data;
 };
 
 /**
@@ -47,15 +51,17 @@ export const updateStudent = async (studentId, updatedStudent) => {
  * @throws {Error} - If the API request fails or returns an error status.
  */
 export const getStudent = async (studentId) => {
-    const response = await fetch(`${URL}/api/student?studentId=${studentId}`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-    });
-    if (!response.ok) {
-        throw new Error("Failed to get student in getStudent " + response.statusText);
-    }
-    const data = await response.json();
-    return data;
+  const response = await fetch(`${URL}/api/student?studentId=${studentId}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!response.ok) {
+    throw new Error(
+      "Failed to get student in getStudent " + response.statusText
+    );
+  }
+  const data = await response.json();
+  return data;
 };
 
 /**
@@ -64,15 +70,17 @@ export const getStudent = async (studentId) => {
  * @throws {Error} If the API request fails or returns an error status.
  */
 export const getStudents = async () => {
-    const response = await fetch(`${URL}/api/students`, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' }
-    });
-    if (!response.ok) {
-        throw new Error("Failed to get students in getStudents " + response.statusText);
-    }
-    const data = await response.json();
-    return data;
+  const response = await fetch(`${URL}/api/students`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!response.ok) {
+    throw new Error(
+      "Failed to get students in getStudents " + response.statusText
+    );
+  }
+  const data = await response.json();
+  return data;
 };
 
 /**
@@ -82,15 +90,17 @@ export const getStudents = async () => {
  * @throws {Error} - If the deletion fails, an error is thrown with the corresponding error message.
  */
 export const deleteStudent = async (studentId) => {
-    const response = await fetch(`${URL}/api/students/${studentId}`, {
-        method: 'DELETE',
-        headers: { 'Content-Type': 'application/json' }
-    });
-    if (!response.ok) {
-        throw new Error("Failed to delete student in deleteStudent " + response.statusText);
-    }
-    const data = await response.json();
-    return data;
+  const response = await fetch(`${URL}/api/students/${studentId}`, {
+    method: "DELETE",
+    headers: { "Content-Type": "application/json" },
+  });
+  if (!response.ok) {
+    throw new Error(
+      "Failed to delete student in deleteStudent " + response.statusText
+    );
+  }
+  const data = await response.json();
+  return data;
 };
 
 /**
@@ -101,16 +111,18 @@ export const deleteStudent = async (studentId) => {
  * @throws {Error} - If the login request fails.
  */
 export const studentLogin = async (studentId, className) => {
-    const response = await fetch(`${URL}/api/login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ studentId, className })
-    });
-    if (!response.ok) {
-        throw new Error("Failed to login student in studentLogin " + response.statusText);
-    }
-    const data = await response.json();
-    return data;
+  const response = await fetch(`${URL}/api/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ studentId, className }),
+  });
+  if (!response.ok) {
+    throw new Error(
+      "Failed to login student in studentLogin " + response.statusText
+    );
+  }
+  const data = await response.json();
+  return data;
 };
 
 /**
@@ -120,14 +132,39 @@ export const studentLogin = async (studentId, className) => {
  * @throws {Error} - If the logout request fails, an error is thrown with the corresponding error message.
  */
 export const studentLogout = async (studentId) => {
-    const response = await fetch(`${URL}/api/logout`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ studentId })
-    });
-    if (!response.ok) {
-        throw new Error("Failed to logout student in studentLogout " + response.statusText);
-    }
-    const data = await response.json();
-    return data;
+  const response = await fetch(`${URL}/api/logout`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ studentId }),
+  });
+  if (!response.ok) {
+    throw new Error(
+      "Failed to logout student in studentLogout " + response.statusText
+    );
+  }
+  const data = await response.json();
+  return data;
+};
+
+/**
+ * Deletes all students from the database by sending a DELETE request to the API endpoint.
+ * @returns {Promise<Object>} - A promise that resolves to the response data.
+ * @throws {Error} - If the deletion request fails, an error is thrown with the corresponding error message.
+ */
+export const deleteAllStudents = async () => {
+  const response = await fetch(`${URL}/api/students`, {
+    method: "DELETE",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: "Bearer " + localStorage.getItem("token"),
+    },
+  });
+  if (!response.ok) {
+    throw new Error(
+      "Failed to delete all students in deleteAllStudents " +
+        response.statusText
+    );
+  }
+  const data = await response.json();
+  return data;
 };
