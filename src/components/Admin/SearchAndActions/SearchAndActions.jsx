@@ -13,9 +13,13 @@ import { Group, TextInput, Button, Modal } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import ExportStudents from "@components/Admin/ExportStudents/ExportStudents";
 import { useDisclosure } from "@mantine/hooks";
+import ResetAllStudents from "@components/Admin/ResetAll/ResetAllStudents";
 
 const SearchAndActions = ({ searchVal, setSearchVal, handleDisplay, data }) => {
-  const [opened, { open, close }] = useDisclosure(false);
+  const [openedExport, { open: openExport, close: closeExport }] =
+    useDisclosure(false);
+  const [openedReset, { open: openReset, close: closeReset }] =
+    useDisclosure(false);
 
   return (
     <Group justify="space-between" mb="xl">
@@ -28,6 +32,21 @@ const SearchAndActions = ({ searchVal, setSearchVal, handleDisplay, data }) => {
         onChange={(e) => setSearchVal(e.target.value)}
       />
       <Group>
+        <Modal
+          opened={openedReset}
+          onClose={closeReset}
+          title="Reset All Students"
+        >
+          <ResetAllStudents data={data} />
+        </Modal>
+        <Button
+          className="btn-std"
+          onClick={openReset}
+          color="red"
+          variant="filled"
+        >
+          Reset All
+        </Button>
         <Button
           className="btn-std"
           onClick={() => handleDisplay("showAddStudentForm")}
@@ -44,12 +63,16 @@ const SearchAndActions = ({ searchVal, setSearchVal, handleDisplay, data }) => {
         >
           Import
         </Button>
-        <Modal opened={opened} onClose={close} title="Export to Spreadsheet">
+        <Modal
+          opened={openedExport}
+          onClose={closeExport}
+          title="Export to Spreadsheet"
+        >
           <ExportStudents students={data} />
         </Modal>
         <Button
           className="btn-std"
-          onClick={open}
+          onClick={openExport}
           color="green"
           variant="filled"
         >

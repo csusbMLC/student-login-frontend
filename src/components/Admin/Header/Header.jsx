@@ -9,6 +9,7 @@
  */
 import { Group, UnstyledButton, Title, Button } from "@mantine/core";
 import { IconSettings } from "@tabler/icons-react";
+import NightMode from "@components/Admin/NightMode/ActionToggle";
 
 function Header({ user, handleLogout, handleDisplay }) {
   return (
@@ -26,6 +27,7 @@ function Header({ user, handleLogout, handleDisplay }) {
         >
           <IconSettings />
         </Button>
+        <NightMode />
       </Group>
     </Group>
   );
