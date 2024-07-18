@@ -14,11 +14,14 @@ import { IconSearch } from "@tabler/icons-react";
 import ExportStudents from "@components/Admin/ExportStudents/ExportStudents";
 import { useDisclosure } from "@mantine/hooks";
 import ResetAllStudents from "@components/Admin/ResetAll/ResetAllStudents";
+import StudentStatus from "../StudentStatus/StudentStatus";
 
 const SearchAndActions = ({ searchVal, setSearchVal, handleDisplay, data }) => {
   const [openedExport, { open: openExport, close: closeExport }] =
     useDisclosure(false);
   const [openedReset, { open: openReset, close: closeReset }] =
+    useDisclosure(false);
+  const [openedStatus, { open: openStatus, close: closeStatus }] =
     useDisclosure(false);
 
   return (
@@ -32,6 +35,17 @@ const SearchAndActions = ({ searchVal, setSearchVal, handleDisplay, data }) => {
         onChange={(e) => setSearchVal(e.target.value)}
       />
       <Group>
+        <Modal size={"50%"} opened={openedStatus} onClose={closeStatus}>
+          <StudentStatus data={data} />
+        </Modal>
+        <Button
+          className="btn-std"
+          onClick={openStatus}
+          color="yellow"
+          variant="filled"
+        >
+          Status
+        </Button>
         <Modal
           opened={openedReset}
           onClose={closeReset}

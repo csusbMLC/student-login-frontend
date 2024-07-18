@@ -99,3 +99,18 @@ export function addMinutesToDate(date, minutes) {
   }
   return new Date(date.getTime() + minutes * 60000);
 }
+
+export function formatDate(
+  date = new Date(),
+  options = {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  }
+) {
+  return date.toLocaleString("en-US", options);
+}
