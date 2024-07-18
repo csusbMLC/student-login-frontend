@@ -1,21 +1,33 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import EditStudentForm from "@components/Admin/EditStudentForm/EditStudentForm";
 import AddStudentForm from "@src/components/Admin/AddStudentForm/AddStudentForm";
 import TimeLogForm from "@src/components/Admin/TimeLogForm/TimeLogForm";
 import ImportStudents from "@src/components/Admin/ImportStudents/ImportStudents";
 import StudentTable from "@src/components/Admin/StudentTable/StudentTable";
 import Header from "@components/Admin/Header/Header";
-import { Box, Container } from "@mantine/core";
+import { Box, Container, Center, Loader, Title, Stack } from "@mantine/core";
 
 import "./Dashboard.css";
-
+import { useQuery } from "@tanstack/react-query";
 import { useDebouncedValue } from "@mantine/hooks";
-import { useLoaderData } from "react-router-dom";
 import { useDisplayState } from "@src/hooks/useDisplayState";
 import { useStudentData } from "@src/hooks/useStudentData";
 import { useAuth } from "@src/hooks/useAuth";
 import SearchAndActions from "@components/Admin/SearchAndActions/SearchAndActions";
 import ChangePassword from "@components/Admin/ChangePassword/ChangePassword";
+import { getStudents } from "@src/services/apiServices";
+import ErrorPage from "@src/components/Error/error-page";
+
+const LoadingScreen = ({ ...props }) => {
+  return (
+    <Center w={"100%"} h={"100%"}>
+      <Stack justify="space-around" align="center">
+        {props.children}
+        <Loader mt={"xl"} size="xl" />
+      </Stack>
+    </Center>
+  );
+};
 
 /**
  * Renders the dashboard component which is the root component for the admin section.
@@ -23,14 +35,18 @@ import ChangePassword from "@components/Admin/ChangePassword/ChangePassword";
  * @returns {JSX.Element} The dashboard component.
  */
 function Dashboard() {
-  const { students } = useLoaderData();
+  // const { students } = useLoaderData();
+  const query = useQuery({ queryKey: ["students"], queryFn: getStudents });
+
   const {
     data,
+    setData,
     handleAddStudent,
     handleDeleteStudent,
     handleUpdateStudent,
     filterStudents,
-  } = useStudentData(students);
+  } = useStudentData(query?.data?.students || []);
+
   const [
     {
       showDashboard,
@@ -57,6 +73,22 @@ function Dashboard() {
     handleDisplay("showTimeLogForm");
   };
 
+  // refresh data for useStudent hook to work with react-query
+  useEffect(() => {
+    if (query?.data) {
+      setData(query.data.students);
+    }
+  }, [query.data, setData, query.isFetched]);
+
+  // loading screen while waiting for data fetch
+  if (query.isLoading)
+    return (
+      <LoadingScreen>
+        <Title>Loading Admin Dashboard</Title>
+      </LoadingScreen>
+    );
+  if (query.error) return <ErrorPage />;
+
   return (
     <Container size="xl">
       <Box>
@@ -74,7 +106,7 @@ function Dashboard() {
               data={data}
             />
             <StudentTable
-              studentData={filterStudents(debounced)}
+              studentData={filterStudents(debounced) || []}
               handleTimeLog={handleTimeLog}
               handleEdit={handleEdit}
               handleDelete={handleDeleteStudent}

@@ -10,15 +10,24 @@ import "./index.css";
 
 import dayjs from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 dayjs.extend(customParseFormat);
+
+const queryClient = new QueryClient();
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 
 root.render(
-  <MantineProvider withGlobalStyles withNormalizeCSS defaultColorScheme="auto">
-    <ModalsProvider>
-      <RouterProvider router={router} />
-    </ModalsProvider>
-  </MantineProvider>
+  <QueryClientProvider client={queryClient}>
+    <MantineProvider
+      withGlobalStyles
+      withNormalizeCSS
+      defaultColorScheme="auto"
+    >
+      <ModalsProvider>
+        <RouterProvider router={router} />
+      </ModalsProvider>
+    </MantineProvider>
+  </QueryClientProvider>
 );

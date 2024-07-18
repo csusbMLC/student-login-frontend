@@ -16,6 +16,7 @@
     "@mantine/hooks": "^7.4.1",
     "@mantine/modals": "^7.4.1",
     "@tabler/icons-react": "^2.40.0",
+    "@tanstack/react-query": "^5.51.9",
     "axios": "^1.7.2",
     "dayjs": "^1.11.10",
     "localforage": "^1.10.0",
