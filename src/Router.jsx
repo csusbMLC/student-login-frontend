@@ -7,7 +7,6 @@ import AdminLogin from "@components/Admin/Login/Login";
 import Dashboard from "@components/Admin/Dashboard/Dashboard.jsx";
 import Logout from "@components/Student/Logout/Logout";
 import { studentLoader } from "@services/loaders/studentLoader";
-import { studentsLoader } from "@services/loaders/studentsLoader";
 import KioskLogin from "./components/Kiosk/Login/Login";
 
 /**
@@ -43,7 +42,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    loader: studentsLoader,
+    // loader: studentsLoader,
     element: <Dashboard />,
     errorElement: <ErrorPage />,
   },
